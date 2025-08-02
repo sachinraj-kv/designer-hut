@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 
@@ -10,7 +10,9 @@ const FindJob = () => {
   const jobs = useSelector((state)=>state?.assetslice?.jobData?? [])
 
 
-  
+  useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, []);
 
   const filteredJobs = jobs.filter((job) => {
 

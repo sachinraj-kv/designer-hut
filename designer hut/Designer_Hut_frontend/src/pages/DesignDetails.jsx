@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -8,6 +8,10 @@ const DesignDetails = () => {
   const upload_Details = useSelector((state) => state?.assetslice?.designData ?? [])
 
   const filter_upload = upload_Details.find((ele) => ele._id === id)
+
+   useEffect(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
 
   const user = {
     name: "Jubnu",
@@ -26,20 +30,20 @@ const DesignDetails = () => {
   return (
     <div className="bg-gray-50">
       <div className="p-6 max-w-7xl mx-auto mt-30">
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 ">
 
-          <div className="md:col-span-2 overflow-y-auto max-h-[calc(100vh-150px)] pr-2">
+          <div className="md:col-span-2 overflow-y-auto max-h-[calc(100vh-150px)] pr-2 ">
             <img
               src={filter_upload.images} 
               alt="Design preview"
-              className="w-full h-auto rounded-2xl max-w-3xl shadow-lg"
+              className="w-full h-auto rounded-2xl max-w-3xl shadow-lg md:mt-10"
             />
             <div className="mt-6 space-y-4">
-              <h1 className="text-4xl font-extrabold text-gray-900 w-3xl">{filter_upload.title}</h1>
+              <h1 className="text-4xl font-extrabold text-gray-900 w-3xl ">{filter_upload.title}</h1>
               <span className="inline-block px-3 py-1 text-xs font-medium text-white bg-indigo-600 rounded-full">
                 {filter_upload.category}
               </span>
-              <p className="text-gray-700 text-lg leading-relaxed border-t pt-4">
+              <p className="text-gray-700 text-lg leading-relaxed border-t pt-4 md:mb-20">
                 {filter_upload.about}
               </p>
             </div>

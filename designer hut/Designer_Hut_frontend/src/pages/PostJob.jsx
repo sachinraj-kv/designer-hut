@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -6,6 +6,10 @@ import { api } from '@/api/api' // make sure this is correctly defined
 import { toast } from 'sonner'
 
 const PostJob = () => {
+    useEffect(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, []);
+
   const {
     register,
     handleSubmit,

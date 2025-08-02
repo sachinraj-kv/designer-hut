@@ -1,23 +1,61 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { CircleChevronUp, Search } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
-import { Card, CardContent } from "@/components/ui/card"
-import Autoplay from "embla-carousel-autoplay"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { CircleChevronUp, Search } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
-import { useSelector } from 'react-redux'
-
-
+} from "@/components/ui/carousel";
+import { useSelector } from 'react-redux';
+import { api } from '@/api/api';
 
 const Section = () => {
-
   const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true, stopOnMouseEnter: true }));
+  const [showModel, setShowModel] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const searchRef = useRef();
+  const designs = useSelector((state) => state?.assetslice?.designData ?? []);
+  const [result , setresult] = useState([])
+
+  useEffect(() => {
+    if (showModel) {
+      window.scrollTo({ top: 100, behavior: 'smooth' });
+    }
+  }, [showModel]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showModel && searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowModel(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showModel]);
+
+
+  const handlesubmit = async(data) => {
+    console.log("data", data);
+
+    const serdhdata = await api.post('/search',{
+      query : data 
+    })
+
+   if (serdhdata && serdhdata.data && serdhdata.data.results?.length > 0) {
+  console.log("search results", serdhdata.data.results);
+} else {
+  console.log("No result found");
+}
+
+
+ 
+  
+  }
 
   const carouselItems = [
     {
@@ -42,69 +80,47 @@ const Section = () => {
     }
   ];
 
-  const [ShowModel, setShowModel] = useState(false)
-
-  const serchref = useRef()
-
-  useEffect(() => {
-    if (ShowModel) {
-      
-      window.scrollTo({ top: 100, behavior: 'smooth' });
-  
-    }
-}, [ShowModel]);
-
- useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (ShowModel && serchref.current && !serchref.current.contains(event.target)) {
-      setShowModel(false);
-    }
-  };
-
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => document.removeEventListener('mousedown', handleClickOutside);
-}, [ShowModel]);
-
-  const designs = useSelector((state) => state?. assetslice?.designData?? [])
-
-  console.log("designs",designs);
-
-
-  
-
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 m-5 gap-4 mt-20' >
+    <div className='grid grid-cols-1 md:grid-cols-2 m-5 gap-4 mt-20'>
       <div className="font-extrabold flex flex-col justify-center gap-6 px-4 md:px-10 py-8">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight">
           Explore the<br />
-          <span className="text-indigo-600">  Best Designers Around the Globe</span>
+          <span className="text-indigo-600">Best Designers Around the Globe</span>
         </h1>
         <p className="text-base md:text-lg text-gray-600 font-normal max-w-xl leading-relaxed">
           Discover exceptional work by world-class creatives prepared for your next project.
         </p>
+
+
         <div className='mt-6 flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-md w-full max-w-xl'>
           <Search className="text-gray-500" />
           <Input
-            onClick={() => setShowModel(!ShowModel)}
+            onClick={() => setShowModel(true)}
+            onChange={(e) => setSearchText(e.target.value)}
+            value={searchText}
             placeholder="Search top designers..."
             className='border-none focus:ring-0 focus:outline-none focus-visible:ring-0 placeholder:text-gray-400 text-base'
           />
           <Button
-            className='bg-black text-white hover:bg-gray-800 rounded-full px-4 py-2 text-sm font-medium'
-          >
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              handlesubmit(searchText);
+            }}
+            className='bg-black text-white hover:bg-gray-800 rounded-full px-4 py-2 text-sm font-medium'>
             Search
           </Button>
         </div>
-        {ShowModel && (
-          <div
-          ref={serchref}
-           className='bg-gray-300 shadow-2xs border-2 mt-2 p-2 rounded-3xl'
-           >
-            <Searchmodel />
+
+        {showModel && (
+          <div ref={searchRef} className='bg-gray-300 shadow-2xs border-2 mt-2 p-2 rounded-3xl'>
+            <Searchmodel searchText={searchText} designs={designs} handlesubmit={handlesubmit} setShowModel={setShowModel} />
           </div>
         )}
       </div>
-      <div className=' mt-10 '>
+
+
+      <div className='mt-10'>
         <div className="hidden md:flex justify-center items-center h-full">
           <Carousel
             opts={{ align: "start" }}
@@ -116,9 +132,8 @@ const Section = () => {
           >
             <CarouselContent className="-mt-1 h-[200px] sm:h-[250px] md:h-[300px] lg:h-[360px] space-y-2">
               {carouselItems.map((ele, index) => (
-                <CarouselItem key={index} className=" basis-1/3 pt-1 md:basis-1/2">
+                <CarouselItem key={index} className="basis-1/3 pt-1 md:basis-1/2">
                   <div className="p-1">
-                   
                     <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-300">
                       <CardContent className="p-0 overflow-hidden rounded-xl">
                         <img
@@ -132,12 +147,10 @@ const Section = () => {
                         </div>
                       </CardContent>
                     </Card>
-                   
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-
             <CarouselPrevious className="hidden md:block rounded-full bg-indigo-500 text-white hover:bg-indigo-600 shadow-md mt-10">
               <CircleChevronUp size={24} />
             </CarouselPrevious>
@@ -146,29 +159,42 @@ const Section = () => {
         </div>
       </div>
     </div>
-  )
-}
-
-const Searchmodel = () => {
-  return (
-    <div className="bg-white rounded-xl shadow-lg p-4">
-      <ul className="space-y-2">
-        <li className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-          Web Designer
-        </li>
-        <li className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-          UI/UX Designer
-        </li>
-        <li className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-          Product Designer
-        </li>
-        <li className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-          Logo  Designer
-        </li>
-      </ul>
-    </div>
   );
 };
 
 
-export default Section
+const Searchmodel = ({ searchText, designs ,handlesubmit ,setShowModel}) => {
+
+
+  const filteredDesigns = designs.filter((design) =>
+    design.title?.toLowerCase().includes(searchText.toLowerCase()) ||
+    design.category?.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-4 max-h-64 overflow-y-auto">
+      {filteredDesigns.length > 0 ? (
+        <ul className="space-y-2">
+          {filteredDesigns.map((item) => (
+            <li
+              key={item._id}
+              className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <span onClick={(e) => {
+                setShowModel(false)
+              e.preventDefault();
+              handlesubmit(item.category);
+            }} className="text-sm text-gray-500 ml-2">({item.category})</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-500 text-sm text-center">No matching designs found.</p>
+      )}
+    </div>
+  );
+};
+
+export default Section;

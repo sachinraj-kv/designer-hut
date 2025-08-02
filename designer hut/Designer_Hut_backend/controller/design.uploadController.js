@@ -87,6 +87,7 @@ exports.uploadDesignView = async (req ,res)=>{
             message :  error.message
         })
     }
+
 }
 
 exports.uploadedFileView = async (req ,res)=>{
@@ -164,4 +165,47 @@ exports.detailed_Upload = async (req ,res )=>{
 
 
 }
+
+exports.search_method = async (req, res) => {
+    const { query } = req.body;
+
+    console.log("query",query);
+    
+
+    if (!query) {
+        return res.status(400).json({
+            success: false,
+            message: "Search query is required"
+        });
+    }
+
+    try {
+        const uploads = await DesignUpload.find();
+
+        if (!uploads || uploads.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No uploads found"
+            });
+        }
+
+        const filteredUploads = uploads.filter(upload =>
+            (upload.title && upload.title.toLowerCase().includes(query.toLowerCase())) ||
+            (upload.category && upload.category.toLowerCase().includes(query.toLowerCase()))
+        );
+    
+        
+        res.status(200).json({
+            success: true,
+            results: filteredUploads
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 

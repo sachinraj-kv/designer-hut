@@ -20,8 +20,7 @@ exports.authorization = async(req ,res ,next)=>{
         
         req.id = decode.id
         req.role = decode.role
-      
-      
+        
     })
   
 

@@ -3,50 +3,52 @@ import { AlignJustify, ChevronDown, WrapText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+
 const Navigation = () => {
   const [isToggled, setIsToggled] = useState(false);
-  const menuRef = useRef(null);
+
+  
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (isToggled && menuRef.current && !menuRef.current.contains(event.target)) {
-      setIsToggled(false);
-    }
-  };
+    const handleClickOutside = (event) => {
+      if (isToggled && menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsToggled(false);
+      }
+    };
 
-  let startX = 0;
-  let endX = 0;
-  let startY = 0;
-  let endY = 0;
+    let startX = 0;
+    let endX = 0;
+    let startY = 0;
+    let endY = 0;
 
-  const handleTouchStart = (e) => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  };
+    const handleTouchStart = (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    };
 
-  const handleTouchEnd = (e) => {
-    endX = e.changedTouches[0].clientX;
-    endY = e.changedTouches[0].clientY;
+    const handleTouchEnd = (e) => {
+      endX = e.changedTouches[0].clientX;
+      endY = e.changedTouches[0].clientY;
 
-    const diffX = endX - startX;
-    const diffY = endY - startY;
+      const diffX = endX - startX;
+      const diffY = endY - startY;
 
-    
-   if (Math.abs(diffX) > 50 || Math.abs(diffY) > 50) {
-      setIsToggled(false);
-    }
-  };
 
-  document.addEventListener('mousedown', handleClickOutside);
-  document.addEventListener('touchstart', handleTouchStart);
-  document.addEventListener('touchend', handleTouchEnd);
+      if (Math.abs(diffX) > 50 || Math.abs(diffY) > 50) {
+        setIsToggled(false);
+      }
+    };
 
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-    document.removeEventListener('touchstart', handleTouchStart);
-    document.removeEventListener('touchend', handleTouchEnd);
-  };
-}, [isToggled]);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isToggled]);
 
 
   return (
@@ -66,7 +68,9 @@ const Navigation = () => {
               <Dropdown label="Hire Designer" />
               <Dropdown label="Design" />
               <div>Support</div>
-              <div>About</div>
+              <div onClick={() => aboutRef?.current?.scrollIntoView({ behavior: 'smooth' })}>
+                About
+              </div>
               <Link to="/register" className="hover:text-indigo-600 transition-colors">Create Account</Link>
               <Link to="/findjobs" className="hover:text-indigo-600 transition-colors">Find Job</Link>
             </div>
@@ -90,28 +94,28 @@ const Navigation = () => {
       </nav>
 
       <AnimatePresence>
-  {isToggled && (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className="fixed top-30 left-0 right-0 z-40 px-4 md:hidden"
-    >
-      <div
-        ref={menuRef}
-        className="w-full max-w-[90vw] sm:max-w-[500px] mx-auto bg-cover bg-center bg-no-repeat rounded-2xl p-6 shadow-lg"
-        style={{
-          backgroundImage: "url('https://wallpapercave.com/wp/wp12537711.jpg')",
-        }}
-      >
-        <div className="rounded-xl p-4 shadow-md ">
-          <ResponsiveModel setIsToggled={setIsToggled} />
-        </div>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+        {isToggled && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-30 left-0 right-0 z-40 px-4 md:hidden"
+          >
+            <div
+              ref={menuRef}
+              className="w-full max-w-[90vw] sm:max-w-[500px] mx-auto bg-cover bg-center bg-no-repeat rounded-2xl p-6 shadow-lg"
+              style={{
+                backgroundImage: "url('https://wallpapercave.com/wp/wp12537711.jpg')",
+              }}
+            >
+              <div className="rounded-xl p-4 shadow-md ">
+                <ResponsiveModel setIsToggled={setIsToggled} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
@@ -192,7 +196,7 @@ function MegaMenuSection() {
   return (
     <div className="w-56 bg-white rounded-xl shadow-lg p-4 border border-gray-200">
       <ul className="text-gray-700 font-medium space-y-2">
-       <Link to={'/jobpost'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer"> Post job</li></Link>
+        <Link to={'/jobpost'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer"> Post job</li></Link>
         <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">View job</li>
       </ul>
     </div>
@@ -203,9 +207,9 @@ function SecondaryMenu() {
   return (
     <div className="w-56 bg-white rounded-xl shadow-lg p-4 border border-gray-200">
       <ul className="text-gray-700 font-medium space-y-2">
-       <Link to={'/UploadDesign'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">Upload Design</li></Link>
-       <Link to={'/designview'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">View Design</li></Link>
-        
+        <Link to={'/UploadDesign'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">Upload Design</li></Link>
+        <Link to={'/designview'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">View Design</li></Link>
+
       </ul>
     </div>
   );

@@ -42,8 +42,8 @@ const Content = () => {
 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredProjects.map((item) => (
-          <Link to ={`/DesignDetails/${item._id}`}>
+        {filteredProjects.map((item ,index) => (
+          <Link key={index} to ={`/DesignDetails/${item._id}`}>
           <div
             key={item._id}
             className="rounded-xl overflow-hidden shadow-sm bg-white hover:shadow-md transition"

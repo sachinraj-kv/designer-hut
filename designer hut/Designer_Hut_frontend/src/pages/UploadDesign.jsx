@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { designData } from '@/redux/designerAssetsSlice';
 
 const UploadDesign = () => {
+
+  useEffect(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, []);
+  
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState('No file selected');
   const [previewUrl, setPreviewUrl] = useState(null);

@@ -1,6 +1,4 @@
-import React from 'react'
-
-
+import React, { useRef } from 'react'
 import Content from './Content'
 import About from './About'
 import Support from './Support'
@@ -8,12 +6,16 @@ import DesignGallery from './Section'
 
 
 const Home = () => {
+
   return (
     <div>
          
     <DesignGallery/>
     <Content/>
-    <About/>
+    <div >
+      <About/>
+    </div>
+    
     <Support/>
     
   

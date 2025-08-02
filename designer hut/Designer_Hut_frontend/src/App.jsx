@@ -24,8 +24,13 @@ function App() {
   useEffect(()=>{
 
     const fetchdata =async()=>{
-     const data =  await api.get('/view/upload')
+     try {
+      const data =  await api.get('/view/upload')
      dispatch(designData(data.data.uploadView))
+     } catch (error) {
+      console.log(error.message);
+      
+     }
     }
     fetchdata()
 
@@ -33,10 +38,15 @@ function App() {
 
   useEffect(()=>{
     const fetchjob = async()=>{
-       const job = await api.get('/view/postjob')
+      try {
+         const job = await api.get('/view/postjob')
        console.log("job",job);
        
       dispatch(jobData(job.data.jobview))
+      } catch (error) {
+        console.log(error.message);
+        
+      }
     }
    fetchjob()
   },[])
