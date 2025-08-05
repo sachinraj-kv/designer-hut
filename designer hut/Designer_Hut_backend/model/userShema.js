@@ -14,11 +14,14 @@ const userShema = new mongoose.Schema({
         type : String,
         required : true
     },
+    isdesigner : {
+        type : Boolean,
+        default : false
+    },
     role : { 
         type : String,
         default : "user",
-        enum:["Web Designer","Branding" ,"Illustration","UI/UX","Product Design","Logo Design","user" ]
-       
+        enum:["Web Designer","Branding" ,"Illustration","UI/UX","Product Design","Logo Design","user" ]    
     }
 })
 

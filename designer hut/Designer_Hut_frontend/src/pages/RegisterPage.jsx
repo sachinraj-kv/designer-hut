@@ -41,8 +41,8 @@ const RegisterPage = () => {
         name: data.name,
         password: data.password,
         email: data.email,
-        isDesigner: data.isDesigner || false,
-        job_type: data.job_type || null
+        isdesigner: data.isDesigner || false,
+        role: data.job_type || null
       })
 
       if (response?.data?.success) {
@@ -134,12 +134,12 @@ const RegisterPage = () => {
                     className="peer w-full mt-2 p-3 rounded-lg bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 mb-5"
                   >
                     
-                     <option value="web-design">Web Designer</option>
-              <option value="branding">Branding</option>
-              <option value="illustration">Illustration</option>
-              <option value="ui-ux">UI/UX</option>
-              <option value="product-design">Product Design</option>
-              <option value={"Logo Design"}>Logo Design</option>
+                     <option value="Web Designer">Web Designer</option>
+              <option value="Branding">Branding</option>
+              <option value="Illustration">Illustration</option>
+              <option value="UI/UX">UI/UX</option>
+              <option value="Product Design">Product Design</option>
+              <option value="Logo Design">Logo Design</option>
                   </select>
                   {errors.job_type && (
                     <p className="text-sm text-red-500 mt-1">Job Type is required</p>

@@ -47,20 +47,9 @@ const dispatch = useDispatch()
         password: data.password,
         
       })
-      
-           dispatch(loginData({                      
-        user : response?.data?.user  ,
-        isauteticate : response?.data?.isauthenticated  ,
-        token : response?.data?.token  
-      }))
 
-        localStorage.setItem('designerhut_user', JSON.stringify({
-        user :response?.data?.user ,
-        isauthenticated : response?.data?.isauthenticated  ,
-        token : response?.data?.token  
-      }))
-     
-         
+      console.log( response?.data?.token);
+      
       if(response?.data?.success){
 
 
@@ -68,7 +57,22 @@ const dispatch = useDispatch()
           id : loadingat ,
           duration : 3000
         })
+        
+        console.log("response?.data?.isauthenticated",response?.data?.isauthenticated,);
+        
+             dispatch(loginData({                      
+        user : response?.data?.user,
+        authenticate  : response?.data?.isauthenticated ,
+        token : response?.data?.token  
+      }))
 
+
+        localStorage.setItem('designerhut_user', JSON.stringify({
+        user :response?.data?.user ,
+        isauthenticated : response?.data?.isauthenticated  ,
+        token : response?.data?.token  
+      }))
+     
       
         navigate('/')
         reset()

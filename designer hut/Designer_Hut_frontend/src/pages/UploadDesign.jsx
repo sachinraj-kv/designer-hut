@@ -255,7 +255,7 @@ const loadingupat = toast.loading('uploading....')
               <option value="illustration">Illustration</option>
               <option value="ui-ux">UI/UX</option>
               <option value="product-design">Product Design</option>
-              <option value={"Logo Design"}>Logo Design</option>
+              <option value="Logo-Design">Logo Design</option>
             </select>
             {errors.category && <p className="text-red-500">Category is required</p>}
           </div>

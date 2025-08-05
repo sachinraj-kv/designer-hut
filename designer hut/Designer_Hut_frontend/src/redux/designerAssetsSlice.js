@@ -2,10 +2,9 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
     user : null,
-    isauteticate : false,
+    authenticate  : false,
     token : null,
     designData : [],
-    refreshToggle: false,
     jobData :[]
 }
 
@@ -16,16 +15,15 @@ const designerAssetsSlice = createSlice({
     initialState,
     reducers:{
         loginData : (state , action)=>{
-            state.user = action.payload.user
-            state.isauteticate = action.isauthenticated
-            state.token = action.token
+            state.user = action.payload.user 
+            state.authenticate  = action.payload.authenticate 
+            state.token = action.payload.token
+
+         
+            
         },
         designData:(state , action)=>{
             state.designData = action.payload
-            
-        },
-         triggerRefresh: (state) => {
-        state.refreshToggle = !state.refreshToggle
         },
         jobData : (state , action)=>{
             state.jobData = action.payload
@@ -39,5 +37,5 @@ const designerAssetsSlice = createSlice({
 
 
 
-export const {designData ,refreshToggle ,jobData ,loginData} = designerAssetsSlice.actions
+export const {designData  ,jobData ,loginData} = designerAssetsSlice.actions
 export default designerAssetsSlice.reducer 

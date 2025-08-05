@@ -26,9 +26,6 @@ const DesignView = () => {
       const storedUser = JSON.parse(localStorage.getItem('designerhut_user'));
   return reduxUser?.id ? reduxUser : storedUser?.user ?? {};
   },[reduxUser])
-
-
-  console.log("loginUser",loginUser);
   
 
   const [data, setData] = useState([]);

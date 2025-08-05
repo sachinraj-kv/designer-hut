@@ -14,7 +14,7 @@ exports.user_register = async (req, res) => {
         });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password ,isdesigner = false , role = "user" } = req.body;
 
 
     try {
@@ -32,7 +32,9 @@ exports.user_register = async (req, res) => {
         const user = await User.create({
             name,
             email,
-            password: userPassword
+            password: userPassword,
+            isdesigner,
+            role: isdesigner ? role : "user",
         })
 
         res.status(201).json({

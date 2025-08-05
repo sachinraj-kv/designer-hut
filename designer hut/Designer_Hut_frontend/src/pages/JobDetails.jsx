@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { motion } from 'framer-motion';
 
 const JobDetails = () => {
+
+  useEffect(()=>{
+   window.scrollTo({top: 0 , behavior : 'smooth'})
+  },[])
+
   const { id } = useParams();
   const alljob = useSelector((state) => state?.assetslice?.jobData ?? []);
   const detail_job = alljob.find((ele) => ele._id === id);
@@ -21,7 +26,7 @@ const JobDetails = () => {
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, ease: 'easeOut' }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
       className="mt-32 px-4"
     >
       <div className="max-w-5xl mx-auto p-6 space-y-10 backdrop-blur-sm bg-white/60 border border-gray-200 rounded-3xl shadow-2xl mb-10">
@@ -54,6 +59,7 @@ const JobDetails = () => {
           <div className="flex w-max gap-5 p-6">
             <InfoCard title="Location" content={detail_job?.location} />
             <InfoCard title="Job Type" content={detail_job?.job_type} />
+            <InfoCard title="salary"  content={detail_job?.salary}/>
             <InfoCard
               title="Contact"
               content={
@@ -84,6 +90,11 @@ const JobDetails = () => {
                 {req}
               </span>
             ))}
+          </div>
+        </div>
+        <div>
+          <div>
+            <div></div>
           </div>
         </div>
 

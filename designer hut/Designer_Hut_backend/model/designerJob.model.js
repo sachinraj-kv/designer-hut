@@ -43,6 +43,10 @@ const designerjob = new mongoose.Schema({
     company_website: {
         type: String,
         require: true
+    },
+    UserId : {
+        type : String, 
+        require : true
     }
 
 })

@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { designData, jobData } from './redux/designerAssetsSlice'
 import DesignDetails from './pages/DesignDetails'
 import JobDetails from './pages/JobDetails'
+import SearchData from './pages/SearchData'
+import UserJobView from './pages/UserJobView'
 
 
 function App() {
@@ -72,7 +74,9 @@ function App() {
     <Route path='/designview' element={<DesignView/>}/>
     <Route path='/DesignDetails/:id' element={<DesignDetails/>}/>
     <Route path='/JobDetail/:id' element={<JobDetails/>}/> 
-   </Routes>
+    <Route path='/search_result' element={<SearchData/>}/>
+    <Route path='/jobview' element={<UserJobView/>}/>
+    </Routes>
      <Footer/>
    </Router>
    <Toaster richColors position="top-right" />

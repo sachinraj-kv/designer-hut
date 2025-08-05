@@ -13,14 +13,16 @@ import {
 } from "@/components/ui/carousel";
 import { useSelector } from 'react-redux';
 import { api } from '@/api/api';
+import { useNavigate } from 'react-router-dom';
 
 const Section = () => {
   const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true, stopOnMouseEnter: true }));
   const [showModel, setShowModel] = useState(false);
   const [searchText, setSearchText] = useState('');
   const searchRef = useRef();
+  const navigate = useNavigate()
   const designs = useSelector((state) => state?.assetslice?.designData ?? []);
-  const [result , setresult] = useState([])
+  const [result, setresult] = useState([])
 
   useEffect(() => {
     if (showModel) {
@@ -39,22 +41,29 @@ const Section = () => {
   }, [showModel]);
 
 
-  const handlesubmit = async(data) => {
+  const handlesubmit = async (data) => {
     console.log("data", data);
 
-    const serdhdata = await api.post('/search',{
-      query : data 
+    const advancedata = data.trim().replace(/\s+/g, '')
+
+    console.log("advancedata",advancedata);
+    
+
+    const res = await api.post('/search', {
+      query: advancedata
     })
 
-   if (serdhdata && serdhdata.data && serdhdata.data.results?.length > 0) {
-  console.log("search results", serdhdata.data.results);
-} else {
-  console.log("No result found");
-}
+    if (res?.data?.results?.length > 0) {
 
 
- 
-  
+
+      navigate('search_result', { state: { result: res.data.results } })
+
+      console.log("search results", res.data.results);
+    }
+    else {
+      console.log("No result found");
+    }
   }
 
   const carouselItems = [
@@ -101,6 +110,7 @@ const Section = () => {
             placeholder="Search top designers..."
             className='border-none focus:ring-0 focus:outline-none focus-visible:ring-0 placeholder:text-gray-400 text-base'
           />
+
           <Button
             type="button"
             onClick={(e) => {
@@ -110,6 +120,7 @@ const Section = () => {
             className='bg-black text-white hover:bg-gray-800 rounded-full px-4 py-2 text-sm font-medium'>
             Search
           </Button>
+
         </div>
 
         {showModel && (
@@ -163,7 +174,7 @@ const Section = () => {
 };
 
 
-const Searchmodel = ({ searchText, designs ,handlesubmit ,setShowModel}) => {
+const Searchmodel = ({ searchText, designs, handlesubmit, setShowModel }) => {
 
 
   const filteredDesigns = designs.filter((design) =>
@@ -179,14 +190,15 @@ const Searchmodel = ({ searchText, designs ,handlesubmit ,setShowModel}) => {
         <ul className="space-y-2">
           {filteredDesigns.map((item) => (
             <li
+            onClick={(e) => {
+                setShowModel(false)
+                e.preventDefault();
+                handlesubmit(item.category);
+              }} 
               key={item._id}
               className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
             >
-              <span onClick={(e) => {
-                setShowModel(false)
-              e.preventDefault();
-              handlesubmit(item.category);
-            }} className="text-sm text-gray-500 ml-2">({item.category})</span>
+              <span className="text-sm text-gray-500 ml-2">{item.category}</span>
             </li>
           ))}
         </ul>

@@ -1,16 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AlignJustify, ChevronDown, WrapText } from 'lucide-react';
+import { AlignJustify, ChevronDown, Equal, WrapText, WrapTextIcon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { api } from '@/api/api';
 import { Button } from '@/components/ui/button';
+import { useSelector } from 'react-redux';
 
 
-const Navigation = ({ aboutRef, supportRef }) => {
+    const Navigation = ({ aboutRef, supportRef }) => {
 
-  const [isToggled, setIsToggled] = useState(false);
+    const [isToggled, setIsToggled] = useState(false);
 
-  const menuRef = useRef()
+    const menuRef = useRef()
+
+    const isauthenticated = useSelector((state)=>state?.assetslice?.authenticate?? {})
+
+    console.log("isauthenticated",isauthenticated);
+    
+
+    const [token, setToken] = useState('');
+
+    console.log("token",token);
+  
+
+  useEffect(() => {
+    const local = JSON.parse(localStorage.getItem('designerhut_user') || '{}');
+    setToken(local?.token ?? '');
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,7 +51,6 @@ const Navigation = ({ aboutRef, supportRef }) => {
       const diffX = endX - startX;
       const diffY = endY - startY;
 
-
       if (Math.abs(diffX) > 50 || Math.abs(diffY) > 50) {
         setIsToggled(false);
       }
@@ -52,6 +67,8 @@ const Navigation = ({ aboutRef, supportRef }) => {
     };
   }, [isToggled]);
 
+
+
   const handlerllogout = async () => {
     try {
       const response = await api.post('/Logout', {}, { withCredentials: true });
@@ -66,15 +83,10 @@ const Navigation = ({ aboutRef, supportRef }) => {
     }
   };
 
-
-
-
   const handleroot = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   handleroot()
-
-
 
   return (
     <div>
@@ -110,8 +122,26 @@ const Navigation = ({ aboutRef, supportRef }) => {
           </div>
 
           <div className="flex items-center gap-4 text-sm font-medium text-gray-700">
-            <Link to="/login" className="hover:text-indigo-600 transition-colors" >Login</Link>
-            <div onClick={() => handlerllogout()} className="hover:text-indigo-600 transition-colors"><Button>Logout </Button></div>
+
+            {isauthenticated === true || token? (
+              <Button
+                onClick={handlerllogout}
+                className="bg-gray-950 hover:bg-red-600 text-white fon rounded-4xl"
+              >
+                Logout
+              </Button>
+            ) : (
+              <Link
+                to="/login"
+               
+              >
+                <Button className= 'bg-gray-800 text-white hover:bg-green-600 rounded-4xl'>
+                Login
+                </Button>
+              </Link>
+            )}
+
+
             <img
               src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
               alt="flag"
@@ -119,9 +149,9 @@ const Navigation = ({ aboutRef, supportRef }) => {
             />
             <button
               onClick={() => setIsToggled(!isToggled)}
-              className="md:hidden p-2 rounded-full bg-gray-100 transition"
+              className="md:hidden p-2 rounded-full transition"
             >
-              {isToggled ? <WrapText /> : <AlignJustify />}
+              {isToggled ? <X /> : <Equal />}
             </button>
           </div>
         </div>
@@ -231,7 +261,7 @@ function MegaMenuSection() {
     <div className="w-56 bg-white rounded-xl shadow-lg p-4 border border-gray-200">
       <ul className="text-gray-700 font-medium space-y-2">
         <Link to={'/jobpost'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer"> Post job</li></Link>
-        <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">View job</li>
+        <Link to={'jobview'}><li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">View job</li></Link>
       </ul>
     </div>
   );

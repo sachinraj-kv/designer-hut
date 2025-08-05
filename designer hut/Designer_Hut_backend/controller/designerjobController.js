@@ -11,7 +11,7 @@ exports.Designerjob = async (req, res) => {
                     message: result.array()
                 })
             }
-    
+    const id  =  req.id
 
     const { job_title, company_name, Description, location, salary, job_type, contact_information , company_website } = req.body
 
@@ -40,7 +40,8 @@ exports.Designerjob = async (req, res) => {
             logo : logo,
             job_type,
             contact_information,
-            company_website
+            company_website,
+            UserId : id 
         })
 
         res.status(201).json({
