@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const DesignUpload = require("../model/designUpload.model");
+const { param } = require("../routes/design.uploadroutes");
 
 exports.uploadDesign = async (req, res) => {
 
@@ -93,9 +94,6 @@ exports.uploadDesignView = async (req ,res)=>{
 exports.uploadedFileView = async (req ,res)=>{
     const id = req.params.id
 
-
-    
-
     if(!id){
         return res.status(400).json({
             success  : false ,
@@ -169,8 +167,6 @@ exports.detailed_Upload = async (req ,res )=>{
 exports.search_method = async (req, res) => {
     const { query } = req.body;
 
-    console.log("query",query);
-    
 
     if (!query) {
         return res.status(400).json({
@@ -207,5 +203,44 @@ exports.search_method = async (req, res) => {
         });
     }
 };
+
+exports.uplodedfiledelete = async(req ,res) =>{
+   
+    const id = req.params.id
+       
+        
+    if(!id && id.length === 0 ){
+        return res.status(400).json({
+            success : false,
+            message : "not found"
+        })
+    }
+    try {
+        const upload_Delete = await DesignUpload.findByIdAndDelete({_id : id})
+
+    if(!upload_Delete){
+        return res.status(404).json({
+            success : false,
+            message : "not found"
+        })
+    }
+
+    res.status(200).json({
+        success : true,
+        message :"deleted"
+    })
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            success : false,
+            message : error.message
+        })
+    }
+    
+
+
+}
 
 

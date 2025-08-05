@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 const Navigation = () => {
   const [isToggled, setIsToggled] = useState(false);
 
-  
+  const menuRef = useRef()
 
   useEffect(() => {
     const handleClickOutside = (event) => {

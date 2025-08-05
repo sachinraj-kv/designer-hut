@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 const { generateToken } = require("../token/generateToken");
 
+
 exports.user_register = async (req, res) => {
 
     const result = validationResult(req);
@@ -13,7 +14,7 @@ exports.user_register = async (req, res) => {
         });
     }
 
-    const { name, email, password  } = req.body;
+    const { name, email, password } = req.body;
 
 
     try {
@@ -37,7 +38,7 @@ exports.user_register = async (req, res) => {
         res.status(201).json({
             success: true,
             message: "user created sucessfully",
-           
+
         })
 
     } catch (error) {
@@ -121,57 +122,89 @@ exports.user_logout = async (req, res) => {
 
 }
 
-
-exports.user_profile = async(req ,res)=>{         
+exports.user_profile = async (req, res) => {
     const id = req.params.id
-    const {name}= req.body
+    const { name } = req.body
 
-    if(!name){
+    if (!name) {
         res.status(400).json({
-            success : false,
-            message : "profile not edited"
+            success: false,
+            message: "profile not edited"
         })
     }
 
-    if(!id){
+    if (!id) {
         res.status(404).json({
-            success : true,
-            message : "profile not found"
+            success: true,
+            message: "profile not found"
         })
-    } 
+    }
     try {
         const userProfile = await User.findById(id)
 
-    if(!userProfile){
-        res.status(404).json({
-            success : false,
-            message : "profile failed to fetch"
+        if (!userProfile) {
+            res.status(404).json({
+                success: false,
+                message: "profile failed to fetch"
+            })
+        }
+
+        userProfile.name = name;
+
+        const updated_profile = await userProfile.save()
+
+        console.log("updated_profile", updated_profile);
+
+
+
+        res.status(200).json({
+            success: true,
+            message: "profile updated",
+            updated_profile
         })
-    }
-
-    userProfile.name = name;
-
-    const updated_profile = await userProfile.save()
-
-    console.log("updated_profile",updated_profile);
-    
-
-
-    res.status(200).json({
-        success : true,
-        message : "profile updated",
-        updated_profile 
-    })
 
 
 
     } catch (error) {
         res.status(500).json({
-            success : false,
-            message : error.message
+            success: false,
+            message: error.message
         })
     }
 
-} 
+}
 
+exports.user_Delete = async (req, res) => {
+    const id = req.params.id
+
+    console.log("id", id);
+
+    if (!id && id.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: "not found"
+        })
+    }
+    try {
+        const profile_delete = await User.findByIdAndDelete({ _id: id })
+
+        console.log("");
+
+        if (!profile_delete) {
+            return res.status(400).json({
+                success: false,
+                message: "not found data"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: "profile has been deleted "
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
