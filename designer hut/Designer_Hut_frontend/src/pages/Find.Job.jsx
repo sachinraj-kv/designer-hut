@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 
 
@@ -61,11 +62,13 @@ const FindJob = () => {
 
       
       <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+       
         {filteredJobs.length > 0 ? (
           filteredJobs.map((job, index) => (
+             <Link to={`/JobDetail/${job._id}`}>
             <div
               key={index}
-              className="flex items-center justify-between  bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all"
+              className="flex items-center justify-between mb-3 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all"
             >
               <div className="flex items-center gap-4">
                 <img
@@ -86,10 +89,12 @@ const FindJob = () => {
                 </span>
               </div>
             </div>
+             </Link>
           ))
         ) : (
           <p className="text-center text-gray-500 mt-10">No matching jobs found.</p>
         )}
+       
       </div>
     </div>
   )

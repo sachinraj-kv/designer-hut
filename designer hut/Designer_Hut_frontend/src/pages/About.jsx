@@ -4,7 +4,7 @@ const About = () => {
   return (
     <section className="bg-gradient-to-br from-white via-gray-50 to-white py-16 px-4 sm:px-6 lg:px-8 mt-6">
      
-      <div className="max-w-3xl mx-auto text-center mb-14">
+      <div className="max-w-3xl mx-auto text-center mb-14 mt-20">
         <h2 className="text-5xl font-extrabold text-gray-900 tracking-tight">
           About
         </h2>

@@ -5,15 +5,32 @@ import { Link } from 'react-router-dom'
 
 const Content = () => {
 
-
+  const dispatch = useDispatch()
 
   const projects = useSelector((state) => state?.assetslice?.designData ?? [])
 
+    useEffect(()=>{
+  
+      const fetchdata =async()=>{
+       try {
+        const data =  await api.get('/view/upload')
+       dispatch(designData(data.data.uploadView))
+       } catch (error) {
+  
+        console.log(error.message);
+        
+       }
+      }
+      fetchdata()
+  
+    },[projects])
+
 
   const categories = ['All', ...new Set(projects.map((item) => item.category))]
+  
 
   const [activeFilter, setActiveFilter] = useState('All')
-  const dispatch = useDispatch()
+
 
   const filteredProjects =
     activeFilter === 'All' ? projects : projects.filter((p) => p.category?.toLowerCase() === activeFilter.toLowerCase())
@@ -55,7 +72,7 @@ const Content = () => {
             />
             <div className="p-4">
               <h3 className="text-sm font-semibold text-gray-800 truncate">{item.title}</h3>
-              <p className="text-xs text-gray-500 line-clamp-2">{item.about}</p>
+              <p className="text-xs text-gray-500 line-clamp-1">{item.about}</p>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded border">
                   {item.category}

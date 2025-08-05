@@ -7,7 +7,7 @@ const Support = () => {
   return (
     <section className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8 ">
      
-      <div className="max-w-3xl mx-auto text-center mb-14">
+      <div className="max-w-3xl mx-auto text-center mb-14 mt-30">
         <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">
           Need Help? We're Here for You.
         </h2>

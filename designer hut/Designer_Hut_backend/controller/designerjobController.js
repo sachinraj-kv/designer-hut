@@ -90,69 +90,77 @@ exports.DesignerjobView = async(req ,res)=>{
     }
 }
 
-exports.DesignersJobview = async(req ,res)=>{
-    const id = req.Prams.id
+exports.Jobview = async(req ,res)=>{
+
+    const id = req.params.id
+console.log("req.Prams.id",req.params.id);
+
+    console.log("id",id);
+    
 
     if(!id){
-        res.status(400).json({
+       return  res.status(400).json({
             success : false,
-            message : "not fund"
+            message : "not found"
+        })
+  }
+        try {
+              const designerJobs = await Designerjob.findById({_id : id })
+
+        if(!designerJobs){
+          return  res.status(404).json({
+                succes : false ,
+                message : "not found"
+            })
+        }
+
+        res.status(200).json({
+            success : true,
+            message : "fetched successfully",
+            designerJobs
         })
 
-        const User = await Designerjob.findById()
-    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        } catch (error) {
+            res.status(500).json({
+                success : false ,
+                message : error.message
+            })
+        }
 }
+
+exports.jobsremove = async(req ,res)=>{
+
+    const id = req.params.id
+
+    if(!id){
+        return res.status(400).json({
+            succes : falsee ,
+            message :  "not found"
+        })
+    }
+    try {
+           const jobs = await Designerjob.findByIdAndDelete({_id : id})
+
+           console.log("jobs",jobs);
+           
+
+    if(!jobs){
+        return res.status(404).json({
+            succes : false ,
+            message : "not found"
+        })
+    }
+    res.status(200).json({
+        succes: true ,
+        message : "deleted"
+    })
+
+    } catch (error) {
+        res.status().json({
+            succes : false,
+            message : "not found"
+        })
+    }
+}
+

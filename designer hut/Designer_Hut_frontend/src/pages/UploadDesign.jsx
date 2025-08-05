@@ -6,15 +6,16 @@ import { CircleX, Upload } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { api } from '@/api/api';
 import { toast } from 'sonner';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { designData } from '@/redux/designerAssetsSlice';
 
 const UploadDesign = () => {
 
-  useEffect(() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }, []);
   
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState('No file selected');
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -34,30 +35,30 @@ const UploadDesign = () => {
   };
 
   const handleFileChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const file = e.target.files[0];
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-    if (!allowedTypes.includes(file.type)) {
-      setFileError(true);
-      setFileName('Invalid file format');
-      setPreviewUrl(null);
+      if (!allowedTypes.includes(file.type)) {
+        setFileError(true);
+        setFileName('Invalid file format');
+        setPreviewUrl(null);
+        setSelectedFile(null);
+        toast.error('Only JPG, JPEG, PNG, and WEBP files are allowed');
+        return;
+      }
+
+      setSelectedFile(file);
+      setFileName(file.name);
+      setPreviewUrl(URL.createObjectURL(file));
+      setFileError(false);
+    } else {
       setSelectedFile(null);
-      toast.error('Only JPG, JPEG, PNG, and WEBP files are allowed');
-      return;
+      setFileName('No file selected');
+      setPreviewUrl(null);
+      setFileError(true);
     }
-
-    setSelectedFile(file);
-    setFileName(file.name);
-    setPreviewUrl(URL.createObjectURL(file));
-    setFileError(false);
-  } else {
-    setSelectedFile(null);
-    setFileName('No file selected');
-    setPreviewUrl(null);
-    setFileError(true);
-  }
-};
+  };
 
 
   const clearFile = () => {
@@ -70,23 +71,33 @@ const UploadDesign = () => {
     }
   };
 
-  const loginUser_id = useSelector((state)=> state?.assetslice?.user ?? {})
 
-  console.log("loginUser_id",loginUser_id.id);
+
   
+    const fetchdata = async () => {
+             try {
+            const data = await api.get('/view/upload')
+            console.log("data data data",data);
+            if(data.data.success){
+               dispatch(designData(data.data.uploadView))
+            }
+           
+
+         } catch (error) {
+      console.log(error.message);
+       }
+       
+  }
+
+    
+
 
   const onsubmit = async (data) => {
     if (!selectedFile) {
       setFileError(true);
       return;
     }
-
-    console.log("selectedFile", selectedFile);
-    console.log("data.title", data.title);
-
-
-
-
+  
     const formData = new FormData();
     formData.append('images', selectedFile);
     formData.append('title', data.title);
@@ -94,54 +105,50 @@ const UploadDesign = () => {
     formData.append('category', data.category);
 
     for (let pair of formData.entries()) {
-  console.log(pair[0], pair[1]);
-}
+      console.log(pair[0], pair[1]);
+    }
 
-    
-    try 
-    {
+const loadingupat = toast.loading('uploading....')
 
-      const loadingupat = toast.loading('uploading....')
-     
-      const response = await api.post(`/upload/${loginUser_id.id}`, formData, {
+    try {
+      const response = await api.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        withCredentials : true,
       });
-
       if (response?.data?.success) {
-       
-        toast.success(response.data.message || "uploaded",{
-          id : loadingupat,
-          duration : 3000
+
+        toast.success(response?.data?.message || "uploaded", {
+          id: loadingupat,
+          duration: 3000
         })
-         reset();
-         clearFile()
-         
+        reset();
+        clearFile()
+        try {
+          await  fetchdata()
+        } catch (error) {
+          console.log(error.message);
+        }
+        
       }
-      else{
-        toast.error(response?.data?.message || 'uploading failed',{
-          id : loadingupat,
-          duration : 3000
-        })
+      else {
+        toast.error(response?.data?.message || 'uploading failed', {
+          
+          duration: 3000
+
+
+        })  
       }
-    } catch(error) {
-      toast.error("loging error",error)
-     toast.error("error?.response?.data?.message")
+    } catch (error) {
+      
+      toast.error("loging error", error.message)
     }
-
-     useEffect(()=>{
-
-    const fetchdata =async()=>{
-     const data =  await api.get('/view/upload')
-     dispatch(designData(data.data.uploadView))
-    }
-    fetchdata()
-
-  },[dispatch])
-    
-
   };
+
+
+
+
 
   return (
     <div className="mt-40 mb-40 mx-1">
@@ -173,7 +180,7 @@ const UploadDesign = () => {
             >
               <Upload className="mr-2" />
               Select File
-            </Button> 
+            </Button>
 
             <span className="text-sm text-gray-500 truncate max-w-[200px]">{fileName}</span>
 

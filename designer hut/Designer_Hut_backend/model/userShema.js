@@ -16,8 +16,9 @@ const userShema = new mongoose.Schema({
     },
     role : { 
         type : String,
-        enum:["Web Designer","Branding" ,"Illustration","UI/UX","Product Design","Logo Design" ],
-        default : "user"
+        default : "user",
+        enum:["Web Designer","Branding" ,"Illustration","UI/UX","Product Design","Logo Design","user" ]
+       
     }
 })
 

@@ -34,9 +34,9 @@ const RegisterPage = () => {
 
   const onSubmit = async (data) => {
     console.log("Form Submitted", data)
-
-    try {
       const loadingToast = toast.loading('Registering...')
+    try {
+
       const response = await api.post("/register", {
         name: data.name,
         password: data.password,

@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const DesignUpload = require("../model/designUpload.model");
-const { param } = require("../routes/design.uploadroutes");
+
 
 exports.uploadDesign = async (req, res) => {
 
@@ -13,10 +13,16 @@ exports.uploadDesign = async (req, res) => {
                 message: result.array()
             })
         }
-    const id = req.params.id
-
-    console.log("req.params.id",req.params.id);
     
+
+    const id = req.id
+
+    if(!id){
+        res.status(404).json({
+            success : false,
+            message  : "please login"
+        })
+    }
 
     console.log("id",id);
     
@@ -202,12 +208,14 @@ exports.search_method = async (req, res) => {
             message: error.message
         });
     }
-};
+}
 
 exports.uplodedfiledelete = async(req ,res) =>{
    
     const id = req.params.id
        
+    console.log("id",id);
+    
         
     if(!id && id.length === 0 ){
         return res.status(400).json({
@@ -216,8 +224,10 @@ exports.uplodedfiledelete = async(req ,res) =>{
         })
     }
     try {
-        const upload_Delete = await DesignUpload.findByIdAndDelete({_id : id})
+        const upload_Delete = await DesignUpload.findByIdAndDelete({ _id :id})
 
+        console.log("upload_Delete",upload_Delete);
+        
     if(!upload_Delete){
         return res.status(404).json({
             success : false,
@@ -242,5 +252,6 @@ exports.uplodedfiledelete = async(req ,res) =>{
 
 
 }
+
 
 

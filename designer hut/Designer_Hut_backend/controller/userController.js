@@ -113,12 +113,19 @@ exports.user_Login = async (req, res) => {
 }
 
 exports.user_logout = async (req, res) => {
-
-    res.status(200).cookie("token", "").json({
+try {
+     res.status(200).cookie("token", "").json({
         success: true,
         message: "logout successful",
         isauthenticated: false
     })
+} catch (error) {
+    res.status(500).json({
+        success : false ,
+        message : error.message
+    })
+}
+   
 
 }
 

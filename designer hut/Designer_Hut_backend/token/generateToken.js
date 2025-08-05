@@ -4,6 +4,8 @@ exports.generateToken = async (req, res) => {
 
     console.log("login data", req.user);
 
+    console.log("req.user",req.user);
+    
 
     const payload = {
         id: req.user.id,

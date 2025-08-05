@@ -4,23 +4,24 @@ import LoginPage from './pages/LoginPage'
 import Navigation from './pages/NavigationMenu'
 import Footer from './pages/Footer'
 import RegisterPage from './pages/RegisterPage'
-
 import FindJob from './pages/Find.Job'
 import UploadDesign from './pages/UploadDesign'
 import DesignView from './pages/DesignView'
 import PostJob from './pages/PostJob'
 import { Toaster } from 'sonner'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { api } from './api/api'
 import { useDispatch, useSelector } from 'react-redux'
 import { designData, jobData } from './redux/designerAssetsSlice'
 import DesignDetails from './pages/DesignDetails'
+import JobDetails from './pages/JobDetails'
 
 
 function App() {
   const dispatch = useDispatch()
-  
-  const refreshToggle = useSelector((state) => state.assetslice.refreshToggle)
+    const aboutRef = useRef(null); 
+    const supportRef = useRef(null);
+
   useEffect(()=>{
 
     const fetchdata =async()=>{
@@ -28,13 +29,14 @@ function App() {
       const data =  await api.get('/view/upload')
      dispatch(designData(data.data.uploadView))
      } catch (error) {
+
       console.log(error.message);
       
      }
     }
     fetchdata()
 
-  },[dispatch,refreshToggle])
+  },[dispatch])
 
   useEffect(()=>{
     const fetchjob = async()=>{
@@ -59,9 +61,9 @@ function App() {
       
       
      <Router>
-      <Navigation/>
+      <Navigation aboutRef={aboutRef} supportRef={supportRef}  />
    <Routes>
-    <Route path='/' element={< Home/>}/>
+    <Route path='/' element={< Home aboutRef={aboutRef}  supportRef={supportRef} />}/>
     <Route  path='/login' element={<LoginPage/>}/>
     <Route path='/register' element={<RegisterPage/>}/>
     <Route path='/jobpost' element={<PostJob/>}/>
@@ -69,6 +71,7 @@ function App() {
     <Route path='/UploadDesign' element={<UploadDesign/>}/>
     <Route path='/designview' element={<DesignView/>}/>
     <Route path='/DesignDetails/:id' element={<DesignDetails/>}/>
+    <Route path='/JobDetail/:id' element={<JobDetails/>}/> 
    </Routes>
      <Footer/>
    </Router>

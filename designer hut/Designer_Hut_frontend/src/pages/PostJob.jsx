@@ -10,6 +10,21 @@ const PostJob = () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }, []);
 
+    const fetchjob = async()=>{
+      try {
+         const job = await api.get('/view/postjob')
+       console.log("job",job);
+       
+      dispatch(jobData(job.data.jobview))
+      } catch (error) {
+        console.log(error.message);
+        
+      }
+    }
+   fetchjob()
+
+
+
   const {
     register,
     handleSubmit,
@@ -54,7 +69,9 @@ const PostJob = () => {
         duration : 3000
        })
 
+
         reset()
+        fetchjob()
       }
       else{
         toast.error(response?.data?.message || 'post failed',{

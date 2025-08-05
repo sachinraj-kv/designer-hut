@@ -1,26 +1,23 @@
-import React, { useRef } from 'react'
-import Content from './Content'
-import About from './About'
-import Support from './Support'
-import DesignGallery from './Section'
+import React from 'react';
+import Content from './Content';
+import About from './About';
+import Support from './Support';
+import DesignGallery from './Section';
 
-
-const Home = () => {
-
+const Home = ({ aboutRef ,supportRef}) => {
   return (
     <div>
-         
-    <DesignGallery/>
-    <Content/>
-    <div >
-      <About/>
+      <DesignGallery />
+      <Content />
+      <div ref={aboutRef}>
+        <About />
+      </div>
+      <div ref={supportRef}>
+    <Support />
+      </div>
+      
     </div>
-    
-    <Support/>
-    
-  
-    </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

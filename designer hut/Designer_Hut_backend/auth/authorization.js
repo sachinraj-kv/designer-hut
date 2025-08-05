@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 
 exports.authorization = async(req ,res ,next)=>{
+
     const user_Token = req.cookies.token;
 
     console.log("req.cookie",req.cookies);
@@ -21,10 +22,10 @@ exports.authorization = async(req ,res ,next)=>{
         req.id = decode.id
         req.role = decode.role
         
+   
     })
-  
+   next()
 
-    next()
 }
 
 exports.authorizedRole = (...existRole)=>{

@@ -2,9 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AlignJustify, ChevronDown, WrapText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { api } from '@/api/api';
+import { Button } from '@/components/ui/button';
 
 
-const Navigation = () => {
+const Navigation = ({ aboutRef, supportRef }) => {
+
   const [isToggled, setIsToggled] = useState(false);
 
   const menuRef = useRef()
@@ -15,7 +18,6 @@ const Navigation = () => {
         setIsToggled(false);
       }
     };
-
     let startX = 0;
     let endX = 0;
     let startY = 0;
@@ -50,6 +52,29 @@ const Navigation = () => {
     };
   }, [isToggled]);
 
+  const handlerllogout = async () => {
+    try {
+      const response = await api.post('/Logout', {}, { withCredentials: true });
+
+      if (response.data.success) {
+        console.log("logout successfully");
+        localStorage.removeItem("designerhut_user");
+        window.location.href = "/login";
+      }
+    } catch (error) {
+      console.error("Logout error:", error.message);
+    }
+  };
+
+
+
+
+  const handleroot = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  handleroot()
+
+
 
   return (
     <div>
@@ -57,27 +82,36 @@ const Navigation = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/">
-              <img
-                src="https://i.pinimg.com/736x/00/5d/0e/005d0e8541a54d345338efe6aa36aa2c.jpg"
-                alt="logo"
-                className="h-12 w-12 object-cover rounded-full border border-gray-300"
-              />
+              <div onClick={handleroot}>
+                <img
+                  src="https://i.pinimg.com/736x/00/5d/0e/005d0e8541a54d345338efe6aa36aa2c.jpg"
+                  alt="logo"
+                  className="h-12 w-12 object-cover rounded-full border border-gray-300"
+                />
+              </div>
             </Link>
 
             <div className="hidden md:flex gap-6 items-center text-sm font-medium text-gray-700">
               <Dropdown label="Hire Designer" />
               <Dropdown label="Design" />
-              <div>Support</div>
-              <div onClick={() => aboutRef?.current?.scrollIntoView({ behavior: 'smooth' })}>
-                About
-              </div>
+              <Link to={'/'}>
+                <div className='cursor-pointer' onClick={() => supportRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+                  suppport
+                </div>
+              </Link>
+              <Link to={'/'}>
+                <div className='cursor-pointer' onClick={() => aboutRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+                  About
+                </div>
+              </Link>
               <Link to="/register" className="hover:text-indigo-600 transition-colors">Create Account</Link>
               <Link to="/findjobs" className="hover:text-indigo-600 transition-colors">Find Job</Link>
             </div>
           </div>
 
           <div className="flex items-center gap-4 text-sm font-medium text-gray-700">
-            <Link to="/login" className="hover:text-indigo-600 transition-colors">Login</Link>
+            <Link to="/login" className="hover:text-indigo-600 transition-colors" >Login</Link>
+            <div onClick={() => handlerllogout()} className="hover:text-indigo-600 transition-colors"><Button>Logout </Button></div>
             <img
               src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
               alt="flag"
@@ -215,7 +249,7 @@ function SecondaryMenu() {
   );
 }
 
-function ResponsiveModel({ setIsToggled }) {
+function ResponsiveModel({ setIsToggled, aboutRef, supportRef }) {
   return (
     <motion.ul
       initial={{ opacity: 0, x: -200 }}
@@ -230,8 +264,19 @@ function ResponsiveModel({ setIsToggled }) {
       <li className="font-bold hover:text-gray-300">
         <Dropdown label="Design" />
       </li>
-      <li className="font-bold hover:text-gray-300">About</li>
-      <li className="font-bold hover:text-gray-300">Support</li>
+      <li className="font-bold hover:text-gray-300">   <Link to={'/'}>
+        <div className='cursor-pointer' onClick={() => aboutRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+          About
+        </div>
+      </Link></li>
+      <li className="font-bold hover:text-gray-300">
+        <Link to={'/'}>
+          <div className='cursor-pointer' onClick={() => supportRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+            suppport
+          </div>
+        </Link>
+      </li>
+
       <li className="font-bold hover:text-indigo-600">
         <Link to="/register" onClick={() => setIsToggled(false)}>Create Account</Link>
       </li>

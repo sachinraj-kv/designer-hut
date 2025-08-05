@@ -1,37 +1,57 @@
 import { api } from '@/api/api';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { FileInput, Trash2, Upload } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { FileInput, Trash, Upload } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from 'sonner';
 
 const DesignView = () => {
+
+  
   const reduxUser = useSelector((state) => state?.assetslice?.user ?? {});
-  const storedUser = JSON.parse(localStorage.getItem('designerhut_user'));
-  const loginUser = reduxUser?.id ? reduxUser : storedUser?.user ?? {};
+  const loginUser = useMemo(()=>{
+      const storedUser = JSON.parse(localStorage.getItem('designerhut_user'));
+  return reduxUser?.id ? reduxUser : storedUser?.user ?? {};
+  },[reduxUser])
+
+
+  console.log("loginUser",loginUser);
+  
 
   const [data, setData] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
-  
-useEffect(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, []);
-
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   useEffect(() => {
-    const getUploaded = async () => {
-      try {
-        const res = await api.get(`/view/userupload/${loginUser.id}`);
-        const uploads = res.data.upload_Data ?? [];
-        setData(uploads);
-        setFiltered(uploads);
-      } catch (error) {
-        console.error("Failed to fetch uploaded designs:", error);
-      }
-    };
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
+  const getUploaded = async () => {
+    try {
+      const res = await api.get(`/view/userupload/${loginUser.id}`);
+      const uploads = res.data.upload_Data ?? [];
+      setData(uploads);
+      setFiltered(uploads);
+    } catch (error) {
+      console.error("Failed to fetch uploaded designs:", error);
+    }
+  };
+
+  useEffect(() => {
     if (loginUser?.id) {
       getUploaded();
     }
@@ -51,9 +71,19 @@ useEffect(() => {
     }
   };
 
+  const handleDelete = async (designId) => {
+    try {
+      const toastId = toast.loading("Deleting...");
+      await api.delete(`/view/userupload/${designId}`);
+      toast.success("Deleted successfully", { id: toastId });
+      getUploaded(); 
+    } catch (error) {
+      console.error("Delete failed:", error);
+      toast.error("Failed to delete");
+    }
+  };
+
   const upload_count = data.length;
-
-
   const uniqueCategories = [...new Set(data.map((design) => design.category).filter(Boolean))];
 
   return (
@@ -113,29 +143,58 @@ useEffect(() => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {filtered.map((design) => (
-                <Link key={design._id} to={`/DesignDetails/${design._id}`}>
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-200">
+                <div
+                  key={design._id}
+                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-200"
+                >
+                  <Link to={`/DesignDetails/${design._id}`}>
                     <img
                       src={design.images}
                       alt={design.title}
                       className="w-full h-56 object-cover"
                     />
-                    <div className="p-5 flex flex-col justify-between h-full">
-                      <div>
-                        <h2 className="text-lg font-semibold text-gray-800 mb-1">
-                          {design.title}
-                        </h2>
-                        <p className="text-sm text-gray-500">{design.category}</p>
-                        <p className="text-xs text-gray-400 mt-1">Uploaded by you</p>
-                      </div>
-                    </div>
-                    <div className="ml-5 mb-3">
-                      <button className="hover:text-red-600" title="Delete">
-                        <Trash2 size={18} />
-                      </button>
+                  </Link>
+                  <div className="p-5 flex flex-col justify-between ">
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-800 mb-1">
+                        {design.title}
+                      </h2>
+                      <p className="text-sm text-gray-500">{design.category}</p>
+                      <p className="text-xs text-gray-400 mt-1">Uploaded by you</p>
                     </div>
                   </div>
-                </Link>
+                  <div className="ml-5 mb-3">
+                    <AlertDialog >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className=  " hover:text-red-600"
+                          title="Delete"
+                          onClick={() => setDeleteTarget(design._id)}
+                        >
+                            <Trash size={18} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="bg-black text-white border-black p-20">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently delete the design. This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="border-none">Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(deleteTarget)}
+                            className="bg-red-400 hover:bg-red-700 text-white "
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
               ))}
             </div>
           )}
