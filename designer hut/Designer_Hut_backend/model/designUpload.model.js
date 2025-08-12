@@ -15,14 +15,15 @@ const designUploadSchema = new mongoose.Schema({
         required : true
     },
     UserId : {
-        type : String,
-        required : true
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "user"
     },
     category : {
         type : String,
         required : true 
     }
 })
+    
 
 const DesignUpload = mongoose.model('DesignUpload', designUploadSchema);
 

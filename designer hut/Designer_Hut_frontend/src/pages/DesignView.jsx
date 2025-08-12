@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
+import { Endpoint } from '@/constants/endpoints';
 
 const DesignView = () => {
 
@@ -27,7 +28,8 @@ const DesignView = () => {
   return reduxUser?.id ? reduxUser : storedUser?.user ?? {};
   },[reduxUser])
   
-
+  console.log("loginUser",loginUser);
+  
   const [data, setData] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -39,7 +41,7 @@ const DesignView = () => {
 
   const getUploaded = async () => {
     try {
-      const res = await api.get(`/view/userupload/${loginUser.id}`);
+      const res = await api.get(Endpoint.DESIGN_VIEW(loginUser.id));
       const uploads = res.data.upload_Data ?? [];
       setData(uploads);
       setFiltered(uploads);
@@ -52,7 +54,7 @@ const DesignView = () => {
     if (loginUser?.id) {
       getUploaded();
     }
-  }, [loginUser]);
+  }, []);
 
   const handleCategoryChange = (e) => {
     const category = e.target.value;
@@ -69,9 +71,12 @@ const DesignView = () => {
   };
 
   const handleDelete = async (designId) => {
+
+    console.log("designId",designId);
+    
     try {
       const toastId = toast.loading("Deleting...");
-      await api.delete(`/view/userupload/${designId}`);
+      await api.delete(Endpoint.DESIGN_VIEW(designId));
       toast.success("Deleted successfully", { id: toastId });
       getUploaded(); 
     } catch (error) {

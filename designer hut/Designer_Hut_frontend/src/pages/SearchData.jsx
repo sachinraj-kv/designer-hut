@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const SearchData = () => {
 
@@ -14,9 +14,11 @@ const SearchData = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {result.length > 0 ? (
-          result.map((item) => (
+          result.map((item , index) => (
+            <div  key={index}>
+            <Link to={`/DesignDetails/${item._id}`}>
             <div
-              key={item._id}
+             
               className="rounded-xl overflow-hidden shadow-sm bg-white hover:shadow-md transition duration-300"
             >
               <img
@@ -37,6 +39,8 @@ const SearchData = () => {
                   </span>
                 </div>
               </div>
+            </div>
+            </Link>
             </div>
           ))
         ) : (

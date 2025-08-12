@@ -8,6 +8,7 @@ import { api } from '@/api/api';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { designData } from '@/redux/designerAssetsSlice';
+import { Endpoint } from '@/constants/endpoints';
 
 const UploadDesign = () => {
 
@@ -76,8 +77,8 @@ const UploadDesign = () => {
   
     const fetchdata = async () => {
              try {
-            const data = await api.get('/view/upload')
-            console.log("data data data",data);
+            const data = await api.get(Endpoint.UPLOAD_VIEW )
+          
             if(data.data.success){
                dispatch(designData(data.data.uploadView))
             }
@@ -104,14 +105,12 @@ const UploadDesign = () => {
     formData.append('about', data.about);
     formData.append('category', data.category);
 
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
+    
 
 const loadingupat = toast.loading('uploading....')
 
     try {
-      const response = await api.post('/upload', formData, {
+      const response = await api.post(Endpoint.Upload, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

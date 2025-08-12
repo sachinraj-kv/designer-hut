@@ -1,10 +1,9 @@
 const { validationResult } = require("express-validator");
 const DesignUpload = require("../model/designUpload.model");
+const customErrhandle = require("../middleware/errorhandles");
 
 
-exports.uploadDesign = async (req, res) => {
-
-
+exports.uploadDesign = async (req, res,next) => {
 
     const result = validationResult(req);
         if (!result.isEmpty()) {
@@ -14,8 +13,10 @@ exports.uploadDesign = async (req, res) => {
             })
         }
     
+      
 
     const id = req.id
+    
 
     if(!id){
         res.status(404).json({
@@ -26,6 +27,7 @@ exports.uploadDesign = async (req, res) => {
 
     console.log("id",id);
     
+
     const {title , about , category} = req.body;
 
     if(!title || !about || !category ){
@@ -49,7 +51,8 @@ exports.uploadDesign = async (req, res) => {
             })
         }  
 
-
+       
+        
 
         const design = await DesignUpload.create({
             title,
@@ -59,6 +62,13 @@ exports.uploadDesign = async (req, res) => {
             UserId : id
         });
 
+        console.log("design",design);
+        
+
+         const populateuser = await DesignUpload.findById(design._id).populate('UserId' , 'name email')
+
+        console.log("populateuser",populateuser);
+
         res.status(201).json({
             success: true,
             message: "Design uploaded successfully",
@@ -66,12 +76,8 @@ exports.uploadDesign = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "upload failed",
-            error: error.message
-        });
-        
+       customErrhandle(error).send("Something went wrong")
+
     }
 }
 
@@ -84,10 +90,7 @@ exports.uploadDesignView = async (req ,res)=>{
             success : true,
             message : "fetch successfully",
             uploadView
-        })
-
-        
-
+        })        
     } catch (error) {
         res.status(500).json({
             success : false ,
@@ -98,7 +101,7 @@ exports.uploadDesignView = async (req ,res)=>{
 }
 
 exports.uploadedFileView = async (req ,res)=>{
-    const id = req.params.id
+        const id = req.params.id
 
     if(!id){
         return res.status(400).json({
@@ -107,7 +110,8 @@ exports.uploadedFileView = async (req ,res)=>{
         })
     }
     try {
-         const upload_Data =  await DesignUpload.find({UserId :id })
+
+        const upload_Data =  await DesignUpload.find({UserId :id })
 
     if(!upload_Data){
         return res.status(404).json({
@@ -165,13 +169,14 @@ exports.detailed_Upload = async (req ,res )=>{
                 message  : error.message
             })
         }
- 
-
-
 }
 
-exports.search_method = async (req, res) => {
+exports.search_method = async (req, res , next) => {
+    
     const { query } = req.body;
+
+    console.log("query",query);
+    
 
 
     if (!query) {
@@ -182,8 +187,12 @@ exports.search_method = async (req, res) => {
     }
 
     try {
-        const uploads = await DesignUpload.find();
 
+     const uploads = await DesignUpload.find({ title : { $regex: query } } || {about :{$regex : query} } || {category : {$regex : query} });
+// await DesignUpload.find({$and:[{ title : { $regex: query } },]})
+       console.log("regex_upload",uploads);
+       
+        
         if (!uploads || uploads.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -191,30 +200,23 @@ exports.search_method = async (req, res) => {
             });
         }
 
-        const filteredUploads = uploads.filter(upload =>
-            (upload.title && upload.title.toLowerCase().includes(query.toLowerCase())) ||
-            (upload.category && upload.category.toLowerCase().includes(query.toLowerCase()))
-        );
-    
-        
         res.status(200).json({
             success: true,
-            results: filteredUploads
+            results: uploads
         });
 
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+       next(error);
     }
+    
 }
 
-exports.uplodedfiledelete = async(req ,res) =>{
+exports.uplodedfiledelete = async(req ,res,next) =>{
    
     const id = req.params.id
-       
+
     console.log("id",id);
+    
     
         
     if(!id && id.length === 0 ){
@@ -224,11 +226,11 @@ exports.uplodedfiledelete = async(req ,res) =>{
         })
     }
     try {
-        const upload_Delete = await DesignUpload.findByIdAndDelete({ _id :id})
+        const upload_Delete = await DesignUpload.findByIdAndDelete(id)
 
         console.log("upload_Delete",upload_Delete);
         
-    if(!upload_Delete){
+    if(!upload_Delete || upload_Delete.length === 0){
         return res.status(404).json({
             success : false,
             message : "not found"
@@ -240,18 +242,9 @@ exports.uplodedfiledelete = async(req ,res) =>{
         message :"deleted"
     })
 
-
-
     } catch (error) {
-        res.status(500).json({
-            success : false,
-            message : error.message
-        })
+        next(error)
     }
-    
-
-
 }
-
 
 

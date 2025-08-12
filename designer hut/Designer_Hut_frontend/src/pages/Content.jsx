@@ -1,4 +1,6 @@
 import { api } from '@/api/api'
+import { Endpoint } from '@/constants/endpoints'
+import { designData } from '@/redux/designerAssetsSlice'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -13,7 +15,7 @@ const Content = () => {
   
       const fetchdata =async()=>{
        try {
-        const data =  await api.get('/view/upload')
+        const data =  await api.get(Endpoint.UPLOAD_VIEW)
        dispatch(designData(data.data.uploadView))
        } catch (error) {
   
@@ -23,7 +25,7 @@ const Content = () => {
       }
       fetchdata()
   
-    },[projects])
+    },[dispatch])
 
 
   const categories = ['All', ...new Set(projects.map((item) => item.category))]

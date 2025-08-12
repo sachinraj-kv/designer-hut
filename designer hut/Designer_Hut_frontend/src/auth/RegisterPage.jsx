@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '@/api/api'
 import { toast } from 'sonner'
+import { Endpoint } from '@/constants/endpoints'
 
 const RegisterPage = () => {
   const navigate = useNavigate()
@@ -33,11 +34,11 @@ const RegisterPage = () => {
   const isDesigner = watch('isDesigner')
 
   const onSubmit = async (data) => {
-    console.log("Form Submitted", data)
+  
       const loadingToast = toast.loading('Registering...')
     try {
 
-      const response = await api.post("/register", {
+      const response = await api.post(Endpoint.REGISTER, {
         name: data.name,
         password: data.password,
         email: data.email,

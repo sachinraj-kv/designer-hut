@@ -5,7 +5,6 @@ exports.authorization = async(req ,res ,next)=>{
     const user_Token = req.cookies.token;
 
     console.log("req.cookie",req.cookies);
-    
 
     console.log("token",user_Token);
     
@@ -13,8 +12,7 @@ exports.authorization = async(req ,res ,next)=>{
         if(err){
             res.status(401).json({
                 success : false,
-                message : err.message
-                
+                message : "please login"
             })
         }
         console.log("decode",decode);
@@ -28,16 +26,16 @@ exports.authorization = async(req ,res ,next)=>{
 
 }
 
-exports.authorizedRole = (...existRole)=>{
-    return(req ,res,next)=>{
-        const role = req.role;
+// exports.authorizedRole = (...existRole)=>{
+//     return(req ,res,next)=>{
+//         const role = req.role;
 
-        if(!role.includes(existRole)){
-            return res.status(401).json({
-                success : false,
-                message:"unautjorized access"
-            })
-        }
-        next()
-    }
-}
+//         if(!role.includes(existRole)){
+//             return res.status(401).json({
+//                 success : false,
+//                 message:"unautjorized access"
+//             })
+//         }
+//         next()
+//     }
+// }

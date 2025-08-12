@@ -1,36 +1,48 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { AlignJustify, ChevronDown, Equal, WrapText, WrapTextIcon, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { api } from '@/api/api';
-import { Button } from '@/components/ui/button';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useRef, useState } from "react";
+import { ChevronDown, Equal, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { api } from "@/api/api";
+import { Button } from "@/components/ui/button";
+import Cookies from "js-cookie";
+import MegaMenuSection from "@/layout/MegaMenuSection";
+import SecondaryMenu from "@/layout/SecondaryMenu";
+import DialogDemo from "@/layout/DialogDemo";
+import { useSelector } from "react-redux";
+import { Endpoint } from "@/constants/endpoints";
 
 
-    const Navigation = ({ aboutRef, supportRef }) => {
 
-    const [isToggled, setIsToggled] = useState(false);
+const Navigation = ({ aboutRef, supportRef }) => {
 
-    const menuRef = useRef()
+const state_Token = useSelector((state)=> state?.assetslice?.token?? "")
 
-    const isauthenticated = useSelector((state)=>state?.assetslice?.authenticate?? {})
+const [cookietoken , setcookietoken] = useState("")
+  useEffect(()=>{
+      const token = Cookies.get("token");
+       if (token && token.length > 0) {
+      setcookietoken(token);
+    }
+  },[state_Token])
 
-    console.log("isauthenticated",isauthenticated);
-    
+  const [isToggled, setIsToggled] = useState(false);
 
-    const [token, setToken] = useState('');
+  const menuRef = useRef();
 
-    console.log("token",token);
-  
+  const [token, setToken] = useState("");
 
   useEffect(() => {
-    const local = JSON.parse(localStorage.getItem('designerhut_user') || '{}');
-    setToken(local?.token ?? '');
+    const local = JSON.parse(localStorage.getItem("designerhut_user") || "{}");
+    setToken(local?.token ?? "");
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isToggled && menuRef.current && !menuRef.current.contains(event.target)) {
+      if (
+        isToggled &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
         setIsToggled(false);
       }
     };
@@ -56,25 +68,22 @@ import { useSelector } from 'react-redux';
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleTouchStart);
+    document.addEventListener("touchend", handleTouchEnd);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isToggled]);
 
-
-
   const handlerllogout = async () => {
     try {
-      const response = await api.post('/Logout', {}, { withCredentials: true });
+      const response = await api.post(Endpoint.LOGOUT, {}, { withCredentials: true });
 
       if (response.data.success) {
-        console.log("logout successfully");
         localStorage.removeItem("designerhut_user");
         window.location.href = "/login";
       }
@@ -84,9 +93,9 @@ import { useSelector } from 'react-redux';
   };
 
   const handleroot = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  handleroot()
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  handleroot();
 
   return (
     <div>
@@ -98,7 +107,7 @@ import { useSelector } from 'react-redux';
                 <img
                   src="https://i.pinimg.com/736x/00/5d/0e/005d0e8541a54d345338efe6aa36aa2c.jpg"
                   alt="logo"
-                  className="h-12 w-12 object-cover rounded-full border border-gray-300"
+                  className="h-12 w-12 object-cover rounded-full"
                 />
               </div>
             </Link>
@@ -106,24 +115,49 @@ import { useSelector } from 'react-redux';
             <div className="hidden md:flex gap-6 items-center text-sm font-medium text-gray-700">
               <Dropdown label="Hire Designer" />
               <Dropdown label="Design" />
-              <Link to={'/'}>
-                <div className='cursor-pointer' onClick={() => supportRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-                  suppport
+              <Link to={"/"}>
+                <div
+                  className="cursor-pointer"
+                  onClick={() =>
+                    supportRef?.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    })
+                  }
+                >
+                  support
                 </div>
               </Link>
-              <Link to={'/'}>
-                <div className='cursor-pointer' onClick={() => aboutRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              <Link to={"/"}>
+                <div
+                  className="cursor-pointer"
+                  onClick={() =>
+                    aboutRef?.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    })
+                  }
+                >
                   About
                 </div>
               </Link>
-              <Link to="/register" className="hover:text-indigo-600 transition-colors">Create Account</Link>
-              <Link to="/findjobs" className="hover:text-indigo-600 transition-colors">Find Job</Link>
+              <Link
+                to="/register"
+                className="hover:text-indigo-600 transition-colors"
+              >
+                Create Account
+              </Link>
+              <Link
+                to="/findjobs"
+                className="hover:text-indigo-600 transition-colors"
+              >
+                Find Job
+              </Link>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-sm font-medium text-gray-700">
-
-            {isauthenticated === true || token? (
+          <div className="flex items-center gap-0 md:gap-4 text-sm font-medium text-gray-700">
+            {cookietoken ? (
               <Button
                 onClick={handlerllogout}
                 className="bg-gray-950 hover:bg-red-600 text-white fon rounded-4xl"
@@ -131,22 +165,26 @@ import { useSelector } from 'react-redux';
                 Logout
               </Button>
             ) : (
-              <Link
-                to="/login"
-               
-              >
-                <Button className= 'bg-gray-800 text-white hover:bg-green-600 rounded-4xl'>
-                Login
+              <Link to="/login">
+                <Button className="bg-gray-800 text-white hover:bg-green-600 rounded-4xl">
+                  Login
                 </Button>
               </Link>
             )}
 
-
-            <img
-              src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
-              alt="flag"
-              className="h-7 w-7 rounded-full border"
-            />
+            {cookietoken ? (
+              <DialogDemo />
+            ) : (
+              <Link to={"/login"}>
+                <Button>
+                  <img
+                    src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+                    alt="flag"
+                    className="h-7 w-7 rounded-full border"
+                  />
+                </Button>
+              </Link>
+            )}
             <button
               onClick={() => setIsToggled(!isToggled)}
               className="md:hidden p-2 rounded-full transition"
@@ -170,7 +208,8 @@ import { useSelector } from 'react-redux';
               ref={menuRef}
               className="w-full max-w-[90vw] sm:max-w-[500px] mx-auto bg-cover bg-center bg-no-repeat rounded-2xl p-6 shadow-lg"
               style={{
-                backgroundImage: "url('https://wallpapercave.com/wp/wp12537711.jpg')",
+                backgroundImage:
+                  "url('https://wallpapercave.com/wp/wp12537711.jpg')",
               }}
             >
               <div className="rounded-xl p-4 shadow-md ">
@@ -180,17 +219,15 @@ import { useSelector } from 'react-redux';
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };
-
 export default Navigation;
 
 function Dropdown({ label }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
   const dropdownRef = useRef();
   const hoverTimeout = useRef(null);
@@ -201,14 +238,14 @@ function Dropdown({ label }) {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const toggleDropdown = () => {
@@ -247,34 +284,13 @@ function Dropdown({ label }) {
 
       <div
         className={`mt-2 rounded-lg w-[200px] z-50 text-black 
-          ${isMobile ? (isOpen ? 'flex' : 'hidden') : isOpen ? 'flex' : 'hidden'} 
+          ${
+            isMobile ? (isOpen ? "flex" : "hidden") : isOpen ? "flex" : "hidden"
+          } 
           md:absolute md:top-full md:left-0`}
       >
-        {label === 'Hire Designer' ? <MegaMenuSection /> : <SecondaryMenu />}
+        {label === "Hire Designer" ? <MegaMenuSection /> : <SecondaryMenu />}
       </div>
-    </div>
-  );
-}
-
-function MegaMenuSection() {
-  return (
-    <div className="w-56 bg-white rounded-xl shadow-lg p-4 border border-gray-200">
-      <ul className="text-gray-700 font-medium space-y-2">
-        <Link to={'/jobpost'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer"> Post job</li></Link>
-        <Link to={'jobview'}><li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">View job</li></Link>
-      </ul>
-    </div>
-  );
-}
-
-function SecondaryMenu() {
-  return (
-    <div className="w-56 bg-white rounded-xl shadow-lg p-4 border border-gray-200">
-      <ul className="text-gray-700 font-medium space-y-2">
-        <Link to={'/UploadDesign'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">Upload Design</li></Link>
-        <Link to={'/designview'}> <li className="px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">View Design</li></Link>
-
-      </ul>
     </div>
   );
 }
@@ -294,25 +310,51 @@ function ResponsiveModel({ setIsToggled, aboutRef, supportRef }) {
       <li className="font-bold hover:text-gray-300">
         <Dropdown label="Design" />
       </li>
-      <li className="font-bold hover:text-gray-300">   <Link to={'/'}>
-        <div className='cursor-pointer' onClick={() => aboutRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-          About
-        </div>
-      </Link></li>
       <li className="font-bold hover:text-gray-300">
-        <Link to={'/'}>
-          <div className='cursor-pointer' onClick={() => supportRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+        {" "}
+        <Link to={"/"}>
+          <div
+            className="cursor-pointer"
+            onClick={() =>
+              aboutRef?.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+          >
+            About
+          </div>
+        </Link>
+      </li>
+      <li className="font-bold hover:text-gray-300">
+        <Link to={"/"}>
+          <div
+            className="cursor-pointer"
+            onClick={() =>
+              supportRef?.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+          >
             suppport
           </div>
         </Link>
       </li>
 
       <li className="font-bold hover:text-indigo-600">
-        <Link to="/register" onClick={() => setIsToggled(false)}>Create Account</Link>
+        <Link to="/register" onClick={() => setIsToggled(false)}>
+          Create Account
+        </Link>
       </li>
       <li className="font-bold hover:text-indigo-600">
-        <Link to="/findjobs" onClick={() => setIsToggled(false)}>Find Job</Link>
+        <Link to="/findjobs" onClick={() => setIsToggled(false)}>
+          Find Job
+        </Link>
       </li>
     </motion.ul>
   );
 }
+
+
+

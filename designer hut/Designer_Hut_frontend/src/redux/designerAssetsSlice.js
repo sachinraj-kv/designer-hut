@@ -8,8 +8,6 @@ const initialState = {
     jobData :[]
 }
 
-
-
 const designerAssetsSlice = createSlice({
     name : "designerAssetsSlice",   
     initialState,
@@ -18,9 +16,6 @@ const designerAssetsSlice = createSlice({
             state.user = action.payload.user 
             state.authenticate  = action.payload.authenticate 
             state.token = action.payload.token
-
-         
-            
         },
         designData:(state , action)=>{
             state.designData = action.payload
@@ -28,13 +23,8 @@ const designerAssetsSlice = createSlice({
         jobData : (state , action)=>{
             state.jobData = action.payload
         }
-        
-        
     }
-
 })
-
-
 
 
 export const {designData  ,jobData ,loginData} = designerAssetsSlice.actions

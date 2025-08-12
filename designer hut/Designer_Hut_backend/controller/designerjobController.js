@@ -13,7 +13,16 @@ exports.Designerjob = async (req, res) => {
             }
     const id  =  req.id
 
-    const { job_title, company_name, Description, location, salary, job_type, contact_information , company_website } = req.body
+    console.log("id",id);
+    
+    const { job_title, company_name, Description, location, salary, job_type , company_website  } = req.body
+  const contact_information = {
+  email: req.body['contact_information.email'],
+  phone: req.body['contact_information.phone'],
+}
+
+    console.log("contact_information",contact_information);
+    
 
     try {
 
@@ -44,6 +53,13 @@ exports.Designerjob = async (req, res) => {
             UserId : id 
         })
 
+        console.log("designjob._id",designjob._id);
+        
+
+        const populateuser = await Designerjob.findById(designjob._id).populate("UserId", 'name email' )
+
+        console.log("populateuser",populateuser);
+        
         res.status(201).json({
             success: true,
             message: "job posted",
@@ -56,7 +72,6 @@ exports.Designerjob = async (req, res) => {
             message: error.message
         })
     }
-
 }
 
 exports.DesignerjobView = async(req ,res)=>{
@@ -70,10 +85,6 @@ exports.DesignerjobView = async(req ,res)=>{
                     message : "not found"
                 })
             }
-
-           
-
-           
 
             res.status(200).json({
                 success : true,
@@ -93,12 +104,9 @@ exports.DesignerjobView = async(req ,res)=>{
 
 exports.Jobview = async(req ,res)=>{
 
-    const id = req.params.id
-console.log("req.Prams.id",req.params.id);
-
+    const id = req.id
     console.log("id",id);
     
-
     if(!id){
        return  res.status(400).json({
             success : false,
@@ -106,7 +114,7 @@ console.log("req.Prams.id",req.params.id);
         })
   }
         try {
-              const designerJobs = await Designerjob.findById({_id : id })
+              const designerJobs = await Designerjob.find({UserId: id}).populate("UserId", 'name email')
 
         if(!designerJobs){
           return  res.status(404).json({
@@ -132,14 +140,25 @@ console.log("req.Prams.id",req.params.id);
 
 exports.jobsremove = async(req ,res)=>{
 
-    const id = req.params.id
+    console.log("hello world");
+    
+    const {id} = req.body
 
+
+    console.log("id",id);
+    
+
+    console.log(" req.body", req.body);
+    
+   
+    
     if(!id){
         return res.status(400).json({
-            succes : falsee ,
+            succes : false ,
             message :  "not found"
         })
     }
+
     try {
            const jobs = await Designerjob.findByIdAndDelete({_id : id})
 
@@ -164,4 +183,5 @@ exports.jobsremove = async(req ,res)=>{
         })
     }
 }
+
 

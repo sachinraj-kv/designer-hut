@@ -10,6 +10,8 @@ const FindJob = () => {
   const [locationFilter, setLocationFilter] = useState("")
   const jobs = useSelector((state)=>state?.assetslice?.jobData?? [])
 
+  
+
 
   useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -65,11 +67,15 @@ const FindJob = () => {
        
         {filteredJobs.length > 0 ? (
           filteredJobs.map((job, index) => (
+            <div
+             key={index}
+            >
              <Link to={`/JobDetail/${job._id}`}>
             <div
-              key={index}
+             
               className="flex items-center justify-between mb-3 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all"
             >
+              
               <div className="flex items-center gap-4">
                 <img
                   src={job.logo}
@@ -90,6 +96,7 @@ const FindJob = () => {
               </div>
             </div>
              </Link>
+             </div>
           ))
         ) : (
           <p className="text-center text-gray-500 mt-10">No matching jobs found.</p>

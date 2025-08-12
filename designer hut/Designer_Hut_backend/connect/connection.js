@@ -14,7 +14,7 @@ const mongooseconnect = () => {
         console.log(`database connected successfully to ${data.connection.host}`);
         
     })
-    
+
     .catch((error)=>{
         console.log(error.message);
         

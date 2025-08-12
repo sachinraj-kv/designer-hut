@@ -1,7 +1,8 @@
 const User = require("../model/userShema");
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
-const { generateToken } = require("../token/generateToken");
+const { generateToken } = require("../utils/generateToken");
+
 
 
 exports.user_register = async (req, res) => {
@@ -14,13 +15,13 @@ exports.user_register = async (req, res) => {
         });
     }
 
-    const { name, email, password ,isdesigner = false , role = "user" } = req.body;
+    const { name, email, password, isdesigner = false, role = "user" } = req.body;
 
 
     try {
         const existingUser = await User.findOne({ email });
 
-        if (existingUser) {
+        if (existingUser ) {
             return res.status(400).json({
                 success: false,
                 message: "Email already exists"
@@ -40,7 +41,6 @@ exports.user_register = async (req, res) => {
         res.status(201).json({
             success: true,
             message: "user created sucessfully",
-
         })
 
     } catch (error) {
@@ -52,7 +52,7 @@ exports.user_register = async (req, res) => {
     }
 }
 
-exports.user_Login = async (req, res) => {
+exports.user_Login = async (req, res,next) => {
 
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -66,12 +66,9 @@ exports.user_Login = async (req, res) => {
 
     console.log(password);
 
-
     try {
 
         const user = await User.findOne({ email })
-
-        console.log(user);
 
 
         if (!user) {
@@ -80,14 +77,12 @@ exports.user_Login = async (req, res) => {
                 message: "user not found"
             })
         }
-        console.log(user.password);
-
+        
 
         const ispasswordValid = await bcrypt.compare(password, user.password);
 
-
         if (!ispasswordValid) {
-            res.status(400).json({
+           return res.status(400).json({
                 success: false,
                 message: "password is not valid"
             })
@@ -106,35 +101,83 @@ exports.user_Login = async (req, res) => {
 
     }
     catch (error) {
-        return res.status(500).json({
+        next(error)
+    }
+}
+
+exports.user_logout = async ( req,res) => {
+    try {
+        const token = req.cookies.token;
+
+        console.log("token",token);
+
+        if(token){
+            res.status(200).cookie("token", "").json({
+            success: true,
+            message: "logout successful",
+            isauthenticated: false
+        })
+        }
+        else{
+            return res.status(400).json({
+                success : false ,
+                message : "you are not logged in"
+            })
+        }
+        
+    } catch (error) {
+        res.status(500).json({
             success: false,
-            message: "error on server",
             message: error.message
         })
     }
 }
 
-exports.user_logout = async (req, res) => {
-try {
-     res.status(200).cookie("token", "").json({
-        success: true,
-        message: "logout successful",
-        isauthenticated: false
+exports.user_ProfileView = async(req ,res)=>{
+    const id = req.id
+    
+    if(!id){
+        res.status(400).json({
+            success : false ,
+            message : "please login"
+        })
+    }
+    try {
+         const fetch_Profile = await User.findById({_id : id})
+
+    if(!fetch_Profile){
+        return res.status(404).json({
+            success : false,
+            message : "not found"
+        })
+    }
+
+    res.status(200).json({
+        success : true,
+        message: "profile fetched successfullly",
+        fetch_Profile
     })
-} catch (error) {
-    res.status(500).json({
-        success : false ,
-        message : error.message
-    })
-}
+
+    } catch (error) {
+        res.status(500).json({
+            success : false ,
+            message : error.message
+        })
+    }
    
+
 
 }
 
 exports.user_profile = async (req, res) => {
-    const id = req.params.id
-    const { name } = req.body
+    const id =  req.id
+    const  {name}  = req.body
 
+
+    console.log("req.body",req.body);
+    
+
+    
     if (!name) {
         res.status(400).json({
             success: false,
@@ -209,6 +252,32 @@ exports.user_Delete = async (req, res) => {
             success: true,
             message: "profile has been deleted "
         })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+exports.user_Data = async (req,res) => {
+
+    try {
+        const existing_User = await User.find()
+
+        if (!existing_User) {
+            return res.status(404).json({
+                success: false,
+                message: "not found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "fetched successfully",
+            existing_User
+        })
+
     } catch (error) {
         res.status(500).json({
             success: false,

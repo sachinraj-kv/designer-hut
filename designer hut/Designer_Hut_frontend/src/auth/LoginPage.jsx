@@ -16,6 +16,7 @@ import { api } from '@/api/api'
 import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
 import { loginData } from '@/redux/designerAssetsSlice'
+import { Endpoint } from '@/constants/endpoints'
 
 
 
@@ -37,45 +38,37 @@ const dispatch = useDispatch()
 
   const onSubmit = async(data) => {
 
-    console.log("Form Submitted", data)
-
-        try {
-           const loadingat = toast.loading('...loging')
-
-           const response = await api.post('/login', {
-        email: data.email,
-        password: data.password,
+   try {
+           const response = await api.post(Endpoint.LOGIN, {
+           email: data.email,
+           password: data.password,
         
       })
 
-      console.log( response?.data?.token);
-      
+       const loadingat = toast.loading('...loging')
       if(response?.data?.success){
 
 
-        toast.success(response.data.message || 'login successful!',{
+        toast.success(response.data.message || 'login     successful!',{
           id : loadingat ,
           duration : 3000
         })
-        
-        console.log("response?.data?.isauthenticated",response?.data?.isauthenticated,);
-        
+
              dispatch(loginData({                      
         user : response?.data?.user,
         authenticate  : response?.data?.isauthenticated ,
         token : response?.data?.token  
       }))
 
-
         localStorage.setItem('designerhut_user', JSON.stringify({
         user :response?.data?.user ,
         isauthenticated : response?.data?.isauthenticated  ,
         token : response?.data?.token  
       }))
-     
-      
+
         navigate('/')
-        reset()
+        reset()  
+
       }
       else{
         toast.error(response?.data?.message || 'registration failed',{
