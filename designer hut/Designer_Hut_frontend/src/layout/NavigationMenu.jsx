@@ -183,7 +183,7 @@ const [cookietoken , setcookietoken] = useState("")
           </div>
 
           <div className="flex items-center gap-0 md:gap-4 text-sm font-medium text-gray-700">
-            {cookietoken ? (
+            {auth ? (
               <Button
                 onClick={handlerllogout}
                 className="bg-gray-950 hover:bg-red-600 text-white fon rounded-4xl"
@@ -198,7 +198,7 @@ const [cookietoken , setcookietoken] = useState("")
               </Link>
             )}
 
-            {cookietoken ? (
+            {auth ? (
               <DialogDemo />
             ) : (
               <Link to={"/login"}>
