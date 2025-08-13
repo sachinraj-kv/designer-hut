@@ -90,7 +90,7 @@ const DesignView = () => {
 
   return (
     <section className="min-h-screen bg-gray-50 px-4 py-14 mt-30">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="max-w-7xl mx-auto space-y-12 ">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">My Uploads</h1>

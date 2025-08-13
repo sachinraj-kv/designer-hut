@@ -26,9 +26,17 @@ const designerJobApplication = new mongoose.Schema({
         type : String,
         require : true
     },
+    job_id :{
+        type : String,
+        require : true
+    },
     recruiter_Id : {
         type : String,
         require : true
+    },
+    time : {
+        type : Date,
+        default : Date.now
     }
 })
 

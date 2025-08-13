@@ -1,20 +1,48 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { api } from '@/api/api';
+import { Endpoint } from '@/constants/endpoints';
+
 
 const JobDetails = () => {
 
   useEffect(()=>{
    window.scrollTo({top: 0 , behavior : 'smooth'})
   },[])
-
+  const navigate = useNavigate()
   const { id } = useParams();
   const alljob = useSelector((state) => state?.assetslice?.jobData ?? []);
   const detail_job = alljob.find((ele) => ele._id === id);
 
-  if (!detail_job) {
+  const [applydata , setapplydata] = useState([])
+
+  const  handleapply=async(data)=>{
+    console.log("data",data);
+    const res = await api.post( `${Endpoint.APPLY_JOB}`,{
+      data : data
+    })
+    try {
+       if(res.data.success)  {
+      setapplydata(res.data.populateuser)
+         navigate('/findjobs')
+    }
+    } catch (error) {
+      nextTick(error)
+    }
+  
+  }
+
+  console.log("applydata",applydata);
+  
+
+
+  
+
+  if (!detail_job){
     return (
       <div className="mt-32 text-center text-red-500 text-lg font-semibold">
         Job not found.
@@ -103,9 +131,10 @@ const JobDetails = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={()=> handleapply(detail_job._id)}
             className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl shadow-xl transition-all duration-300 font-semibold text-lg"
           >
-            Apply Now
+            <div   >Apply Now</div>
           </motion.button>
         </div>
       </div>

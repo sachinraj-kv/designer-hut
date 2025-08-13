@@ -1,5 +1,6 @@
 import { api } from '@/api/api';
 import { Endpoint } from '@/constants/endpoints';
+import { RoutesURL } from '@/constants/route';
 import { sampleSize } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -34,12 +35,19 @@ const DesignDetails = () => {
 
   const filter_user = users.find((ele) => ele._id === filter_upload?.UserId);
 
+  console.log("filter_user",filter_user);
+  
+
   const user = {
+    id : filter_user?._id ?? 'unknown',
     name: filter_user?.name ?? 'Unknown',
     role: filter_user?.role ?? 'Designer',
     avatar:
       'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png',
   };
+
+  console.log("userid",user);
+  
 
   if (!filter_upload) {
     return (
@@ -74,15 +82,18 @@ const DesignDetails = () => {
           </div>
           <div className="order-1 md:order-2">
             <div className="bg-white shadow-xl rounded-2xl p-6 md:p-8 sticky md:top-24 border">
+              <Link to={`/${RoutesURL.PROFILE_VIEW(user.id)}`}>
               <div className="flex flex-col items-center text-center">
                 <img
                   src={user.avatar}
+                  loading='lazy'
                   alt="User avatar"
                   className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover shadow-md mb-4"
                 />
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900">{user.name}</h2>
                 <p className="text-sm text-gray-500">{user.role}</p>
               </div>
+              </Link>
             </div>
           </div>
         </div>

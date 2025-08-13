@@ -12,7 +12,7 @@ exports.generateToken = async (req, res) => {
         time: Date.now(),
         role: req.user.role
     }
-    const jwt_token = await jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+    const jwt_token = await jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h'});
 
     if (!jwt_token) {
         return res.status(500).json({

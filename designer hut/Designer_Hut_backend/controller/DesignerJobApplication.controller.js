@@ -9,6 +9,11 @@ exports.applyed_Job = async (req, res, next) => {
 
   const id = req.id;
 
+  const role = req.role
+
+  console.log("role",role);
+  
+
   console.log("id", id);
 
   try {
@@ -22,7 +27,12 @@ exports.applyed_Job = async (req, res, next) => {
         message: "job not found",
       });
     }
-
+    if(role === 'user'){
+      return res.status(400).json({
+        success : false ,
+        message : "unauthorized access"
+      })
+    }
     const designerJobApplication = await DesignerJobApplication.create({
       UserId: id,
       job: job.job_title,
@@ -30,11 +40,10 @@ exports.applyed_Job = async (req, res, next) => {
       jobtype: job.job_type,
       logo: job.logo,
       recruiter_Id: job.UserId,
+      job_id : job._id
     });
 
-    const populateuser = await DesignerJobApplication.findById(
-      designerJobApplication._id
-    ).populate("UserId", "name email");
+    const populateuser = await DesignerJobApplication.findById(designerJobApplication._id).populate("UserId", "name email");
 
     res.status(200).json({
       success: true,
@@ -46,10 +55,18 @@ exports.applyed_Job = async (req, res, next) => {
   }
 };
 
+
+
+
+
+
+
+
+
 exports.recruiter_view = async (req, res, next) => {
   const id = req.id;
 
-  const role = req.role;
+  const role = req.role;    
 
   console.log("id");
 
@@ -64,12 +81,12 @@ exports.recruiter_view = async (req, res, next) => {
 
   try {
     if (role === "user") {
-      const application_View = await DesignerJobApplication.find({
+      const application = await DesignerJobApplication.find({
         recruiter_Id: id,
       }).populate("UserId" , "name email")
 
 
-      if (!application_View || application_View.length === 0) {
+      if (!application || application.length === 0) {
         return res.status(404).json({
           success: false,
           message: "not found application",
@@ -79,14 +96,14 @@ exports.recruiter_view = async (req, res, next) => {
       return res.status(200).json({
         success: true,
         message: "fetched successfully",
-        application_View,
+        application,
       });
     } else {
-      const job_application = await DesignerJobApplication.find({
+      const application = await DesignerJobApplication.find({
         UserId: id,
       }).populate("UserId", "name email role");
 
-      if (!job_application || job_application.length === 0) {
+      if (!application|| application === 0) {
         return res.status(404).json({
           success: false,
           message: "not found apply",
@@ -95,7 +112,7 @@ exports.recruiter_view = async (req, res, next) => {
       return res.status(200).json({
         success: true,
         message: "fetched successfully",
-        job_application,
+        application,
       });
     }
   } catch (error) {

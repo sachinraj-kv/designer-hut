@@ -11,5 +11,10 @@ export const Endpoint = {
     LOGOUT : "/user/Logout",
     USER_JOB_VIEW : "/job/view/job",
     JOB_VIEW : "/job/view/postjob",
-    SEARCH : "/upload/search"
+    SEARCH : "/upload/search",
+    UPLOAD_PROFILE :(id = ":id") => `/user/upload/profile/${id}`,
+    APPLY_JOB  : "/recruit/applyjob",
+    VIEW_APPLICATION : "/recruit/application_view" 
 }
+
+

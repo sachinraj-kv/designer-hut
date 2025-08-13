@@ -2,6 +2,7 @@ const User = require("../model/userShema");
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 const { generateToken } = require("../utils/generateToken");
+const DesignUpload = require("../model/designUpload.model");
 
 
 
@@ -285,4 +286,38 @@ exports.user_Data = async (req,res) => {
         })
     }
 }
+
+exports.useruploadprofile = async(req ,res ,next)=>{
+    const id = req.params.id
+
+    if(!id){
+        return res.status(400).json({
+            success : false ,
+            message : "not foound"
+        })
+    }
+
+    
+        try {
+          const user_upload = await DesignUpload.find({UserId : id})
+ 
+
+    if(!user_upload ||  user_upload.length === 0){
+        return res.status(404).json({
+            success : false ,
+            message : "no upload  exist"
+        })
+    }
+
+    res.status(200).json({
+        success : true,
+        message : 'fetched successfully',
+        user_upload
+    })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 

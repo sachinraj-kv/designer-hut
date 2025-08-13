@@ -5,11 +5,11 @@ import UploadDesign from '@/auth/UploadDesign'
 import DesignDetails from '@/pages/DesignDetails'
 import DesignView from '@/pages/DesignView'
 import FindJob from '@/pages/Find.Job'
-import Footer from '@/pages/Footer'
+
 import Home from '@/pages/Home'
 import JobDetails from '@/pages/JobDetails'
 
-import Navigation from '@/pages/NavigationMenu'
+
 
 
 import SearchData from '@/pages/SearchData'
@@ -19,13 +19,17 @@ import React, { useRef } from 'react'
 import { BrowserRouter as Router , Route ,Routes} from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { RoutesURL } from '@/constants/route' 
+import Navigation from '@/layout/NavigationMenu'
+import Footer from '@/layout/Footer'
+import Profileview from '@/pages/Profileview'
+import MyApplication from '@/pages/MyApplication'
 
 const AppRouter = () => {
     const aboutRef = useRef(null);
   const supportRef = useRef(null);
   return (
       
-    
+
    <div >
     <>
      <Router>
@@ -42,6 +46,8 @@ const AppRouter = () => {
     <Route path={RoutesURL.JOB_DETAILS()} element={<JobDetails/>}/> 
     <Route path={RoutesURL.SEARCH_RESULT} element={<SearchData/>}/>
     <Route path={RoutesURL.JOB_VIEW} element={<UserJobView/>}/>
+    <Route path={RoutesURL.PROFILE_VIEW()} element={<Profileview/>}/>
+    <Route path={RoutesURL.MYAPPLICATION} element={<MyApplication/>}/>
     </Routes>
      <Footer/>
    </Router>

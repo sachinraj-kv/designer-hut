@@ -11,5 +11,8 @@ export const RoutesURL = {
     UPLOAD_DETAILS :(id = ":id") => `/DesignDetails/${id}`,
     JOB_DETAILS : (id = ":id")=>`/JobDetail/${id}`,
     SEARCH_RESULT : "/search_result",
-    JOB_VIEW : "/jobview"
+    JOB_VIEW : "/jobview",
+    PROFILE_VIEW :(id = ":id")=> `profile/view/${id}`,
+    MYAPPLICATION :"/MyApplication"
 } 
+

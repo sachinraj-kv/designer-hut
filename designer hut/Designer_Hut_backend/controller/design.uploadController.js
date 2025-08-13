@@ -131,9 +131,6 @@ exports.uploadedFileView = async (req ,res)=>{
             message : error.message
         })
     }
-   
-
-
 }
 
 exports.detailed_Upload = async (req ,res )=>{
@@ -188,11 +185,10 @@ exports.search_method = async (req, res , next) => {
 
     try {
 
-     const uploads = await DesignUpload.find({ title : { $regex: query } } || {about :{$regex : query} } || {category : {$regex : query} });
-// await DesignUpload.find({$and:[{ title : { $regex: query } },]})
-       console.log("regex_upload",uploads);
+        const uploads = await DesignUpload.find({$or : [{ title : { $regex: query } },{about :{$regex : query} },{category : {$regex : query} }]})
+
+        console.log("regex_upload",uploads);
        
-        
         if (!uploads || uploads.length === 0) {
             return res.status(404).json({
                 success: false,

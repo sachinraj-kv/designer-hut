@@ -10,6 +10,7 @@ import SecondaryMenu from "@/layout/SecondaryMenu";
 import DialogDemo from "@/layout/DialogDemo";
 import { useSelector } from "react-redux";
 import { Endpoint } from "@/constants/endpoints";
+import { RoutesURL } from "@/constants/route";
 
 
 
@@ -30,11 +31,18 @@ const [cookietoken , setcookietoken] = useState("")
   const menuRef = useRef();
 
   const [token, setToken] = useState("");
-
+  const [loginuser , setloginuser] = useState("")
+  const [auth , setauth] = useState("")
   useEffect(() => {
     const local = JSON.parse(localStorage.getItem("designerhut_user") || "{}");
+    setauth(local?.isauthenticated?? "")
+    setloginuser(local?.user?.role ?? "")
     setToken(local?.token ?? "");
-  }, []);
+  }, [cookietoken]);
+
+  console.log("loginuser",auth);
+  
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -113,8 +121,17 @@ const [cookietoken , setcookietoken] = useState("")
             </Link>
 
             <div className="hidden md:flex gap-6 items-center text-sm font-medium text-gray-700">
-              <Dropdown label="Hire Designer" />
-              <Dropdown label="Design" />
+
+             {auth ? (
+  loginuser === "user" ? (
+    <Dropdown label="Hire Designer" />
+  ) : (
+    <Dropdown label="Design" />
+  )
+) : (
+  <div className="invisible"></div>
+)}
+            
               <Link to={"/"}>
                 <div
                   className="cursor-pointer"
@@ -141,18 +158,27 @@ const [cookietoken , setcookietoken] = useState("")
                   About
                 </div>
               </Link>
-              <Link
+              {cookietoken ? (
+                <div className="invisible"></div>
+              ):(
+                 <Link
                 to="/register"
                 className="hover:text-indigo-600 transition-colors"
               >
                 Create Account
               </Link>
-              <Link
+              )}
+             {loginuser !== "user" ? (  <Link
                 to="/findjobs"
                 className="hover:text-indigo-600 transition-colors"
               >
                 Find Job
+              </Link>):(<div className="invisible"></div>)}
+            
+              <Link to={RoutesURL.MYAPPLICATION}>
+               <div>My Applications</div>
               </Link>
+             
             </div>
           </div>
 
@@ -295,7 +321,7 @@ function Dropdown({ label }) {
   );
 }
 
-function ResponsiveModel({ setIsToggled, aboutRef, supportRef }) {
+function ResponsiveModel({ setIsToggled, aboutRef, supportRef, auth, loginuser, cookietoken }) {
   return (
     <motion.ul
       initial={{ opacity: 0, x: -200 }}
@@ -304,15 +330,41 @@ function ResponsiveModel({ setIsToggled, aboutRef, supportRef }) {
       transition={{ duration: 0.4 }}
       className="space-y-3"
     >
+      {/* Conditional Dropdown */}
+      {auth ? (
+        loginuser === "user" ? (
+          <li className="font-bold hover:text-gray-300">
+            <Dropdown label="Hire Designer" />
+          </li>
+        ) : (
+          <li className="font-bold hover:text-gray-300">
+            <Dropdown label="Design" />
+          </li>
+        )
+      ) : (
+        <div className="invisible"></div>
+      )}
+
+      {/* Support */}
       <li className="font-bold hover:text-gray-300">
-        <Dropdown label="Hire Designer" />
+        <Link to={"/"} onClick={() => setIsToggled(false)}>
+          <div
+            className="cursor-pointer"
+            onClick={() =>
+              supportRef?.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+          >
+            Support
+          </div>
+        </Link>
       </li>
+
+      {/* About */}
       <li className="font-bold hover:text-gray-300">
-        <Dropdown label="Design" />
-      </li>
-      <li className="font-bold hover:text-gray-300">
-        {" "}
-        <Link to={"/"}>
+        <Link to={"/"} onClick={() => setIsToggled(false)}>
           <div
             className="cursor-pointer"
             onClick={() =>
@@ -326,35 +378,37 @@ function ResponsiveModel({ setIsToggled, aboutRef, supportRef }) {
           </div>
         </Link>
       </li>
-      <li className="font-bold hover:text-gray-300">
-        <Link to={"/"}>
-          <div
-            className="cursor-pointer"
-            onClick={() =>
-              supportRef?.current?.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              })
-            }
-          >
-            suppport
-          </div>
-        </Link>
-      </li>
 
+      {/* Create Account */}
+      {!cookietoken && (
+        <li className="font-bold hover:text-indigo-600">
+          <Link to="/register" onClick={() => setIsToggled(false)}>
+            Create Account
+          </Link>
+        </li>
+      )}
+
+      {/* Find Job */}
+      {loginuser !== "user" ? (
+        <li className="font-bold hover:text-indigo-600">
+          <Link to="/findjobs" onClick={() => setIsToggled(false)}>
+            Find Job
+          </Link>
+        </li>
+      ) : (
+        <div className="invisible"></div>
+      )}
+
+      {/* My Applications */}
       <li className="font-bold hover:text-indigo-600">
-        <Link to="/register" onClick={() => setIsToggled(false)}>
-          Create Account
-        </Link>
-      </li>
-      <li className="font-bold hover:text-indigo-600">
-        <Link to="/findjobs" onClick={() => setIsToggled(false)}>
-          Find Job
+        <Link to={RoutesURL.MYAPPLICATION} onClick={() => setIsToggled(false)}>
+          My Applications
         </Link>
       </li>
     </motion.ul>
   );
 }
+
 
 
 
