@@ -198,7 +198,7 @@ const [cookietoken , setcookietoken] = useState("")
               </Link>
             )}
 
-            {auth ? (
+            {auth? (
               <DialogDemo />
             ) : (
               <Link to={"/login"}>
@@ -408,6 +408,7 @@ function ResponsiveModel({ setIsToggled, aboutRef, supportRef, auth, loginuser, 
     </motion.ul>
   );
 }
+
 
 
 
