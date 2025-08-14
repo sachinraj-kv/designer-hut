@@ -17,8 +17,7 @@ app.use(cookieparser())
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
 app.use(cors({
-  // origin: "https://designhut-app.onrender.com",
-  origin : "http://localhost:5173",
+  origin: "https://designhut-app.onrender.com",
   credentials: true
 }));
 
