@@ -184,18 +184,19 @@ const [cookietoken , setcookietoken] = useState("")
 
           <div className="flex items-center gap-0 md:gap-4 text-sm font-medium text-gray-700">
             {auth ? (
-              <Button
-                onClick={handlerllogout}
-                className="bg-gray-950 hover:bg-red-600 text-white fon rounded-4xl"
-              >
-                Logout
-              </Button>
-            ) : (
               <Link to="/login">
                 <Button className="bg-gray-800 text-white hover:bg-green-600 rounded-4xl">
                   Login
                 </Button>
               </Link>
+            ) : (
+            
+                <Button
+                onClick={handlerllogout}
+                className="bg-gray-950 hover:bg-red-600 text-white fon rounded-4xl"
+              >
+                Logout
+              </Button>
             )}
 
             {auth ? (
