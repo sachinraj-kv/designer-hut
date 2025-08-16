@@ -108,30 +108,35 @@ exports.user_Login = async (req, res,next) => {
 
 exports.user_logout = async ( req,res) => {
     try {
-        const token = req.cookies.token;
+    const token = req.cookies.token;
 
-        console.log("token",token);
+    console.log("token", token);
 
-        if(token){
-            res.status(200).cookie("token", "").json({
+    if (token) {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        });
+
+        return res.status(200).json({
             success: true,
             message: "logout successful",
             isauthenticated: false
-        })
-        }
-        else{
-            return res.status(400).json({
-                success : false ,
-                message : "you are not logged in"
-            })
-        }
-        
-    } catch (error) {
-        res.status(500).json({
+        });
+    } else {
+        return res.status(400).json({
             success: false,
-            message: error.message
-        })
+            message: "you are not logged in"
+        });
     }
+} catch (error) {
+    res.status(500).json({
+        success: false,
+        message: error.message
+    });
+}
+
 }
 
 exports.user_ProfileView = async(req ,res)=>{
