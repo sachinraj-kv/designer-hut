@@ -9,7 +9,7 @@ const { authorization } = require('../middleware/authorization');
 const routers = express.Router();
 
 
-routers.route('/uploads').post(upload.single("images"), designuploadValidaton, authorization, uploadDesign)
+routers.route('/uploads').post(authorization, upload.single("images"), designuploadValidaton, uploadDesign);
 routers.route('/search').post(search_method)
 routers.route('/view/upload').get(uploadDesignView)
 routers.route('/view/userupload/:id').get(uploadedFileView).delete(uplodedfiledelete)

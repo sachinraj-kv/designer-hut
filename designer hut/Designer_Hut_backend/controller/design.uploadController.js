@@ -51,9 +51,6 @@ exports.uploadDesign = async (req, res,next) => {
             })
         }  
 
-       
-        
-
         const design = await DesignUpload.create({
             title,
             images: imageUrl,
@@ -76,7 +73,7 @@ exports.uploadDesign = async (req, res,next) => {
         });
 
     } catch (error) {
-       customErrhandle(error).send("Something went wrong")
+       customErrhandle(error)
 
     }
 }

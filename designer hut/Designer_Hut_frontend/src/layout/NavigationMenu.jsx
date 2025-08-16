@@ -19,31 +19,32 @@ const Navigation = ({ aboutRef, supportRef }) => {
 const state_Token = useSelector((state)=> state?.assetslice?.token?? "")
 
 const [cookietoken , setcookietoken] = useState("")
-  useEffect(()=>{
-      const token = Cookies.get("token");
-       if (token && token.length > 0) {
-      setcookietoken(token);
-    }
-  },[state_Token])
-
+ useEffect(() => {
+  const token = Cookies.get("token");
+  setcookietoken(token || "");
+}, [state_Token]);
   const [isToggled, setIsToggled] = useState(false);
 
   const menuRef = useRef();
 
   const [token, setToken] = useState("");
   const [loginuser , setloginuser] = useState("")
-  const [auth , setauth] = useState("")
-  useEffect(() => {
-    const local = JSON.parse(localStorage.getItem("designerhut_user") || "{}");
-    setauth(local?.isauthenticated?? "")
-    setloginuser(local?.user?.role ?? "")
-    setToken(local?.token ?? "");
-  }, [cookietoken]);
+  const [auth , setauth] = useState("false")
+
+useEffect(() => {
+  const local = JSON.parse(localStorage.getItem("designerhut_user") || "{}");
+  setauth(!!local.isauthenticated);
+  setloginuser(local.user?.role || "");
+  setToken(local.token || "");
+}, [state_Token]); 
+
+
+ 
 
   console.log("loginuser",auth);
+  console.log("token",token);
   
-
-
+       
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -184,22 +185,23 @@ const [cookietoken , setcookietoken] = useState("")
 
           <div className="flex items-center gap-0 md:gap-4 text-sm font-medium text-gray-700">
             {auth ? (
-              <Link to="/login">
-                <Button className="bg-gray-800 text-white hover:bg-green-600 rounded-4xl">
-                  Login
-                </Button>
-              </Link>
-            ) : (
-            
-                <Button
+              <Button
                 onClick={handlerllogout}
                 className="bg-gray-950 hover:bg-red-600 text-white fon rounded-4xl"
               >
                 Logout
               </Button>
+            ) : (
+            
+               
+               <Link to="/login">
+                <Button className="bg-gray-800 text-white hover:bg-green-600 rounded-4xl">
+                  Login
+                </Button>
+              </Link>
             )}
 
-            {auth? (
+            {auth === true? (
               <DialogDemo />
             ) : (
               <Link to={"/login"}>
