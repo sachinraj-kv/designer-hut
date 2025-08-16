@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronDown, Equal, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "@/api/api";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
@@ -12,39 +12,34 @@ import { useSelector } from "react-redux";
 import { Endpoint } from "@/constants/endpoints";
 import { RoutesURL } from "@/constants/route";
 
-
-
 const Navigation = ({ aboutRef, supportRef }) => {
+  const navigate = useNavigate();
 
-const state_Token = useSelector((state)=> state?.assetslice?.token?? "")
+  const state_Token = useSelector((state) => state?.assetslice?.token ?? "");
 
-const [cookietoken , setcookietoken] = useState("")
- useEffect(() => {
-  const token = Cookies.get("token");
-  setcookietoken(token || "");
-}, [state_Token]);
+  const [cookietoken, setcookietoken] = useState("");
+  useEffect(() => {
+    const token = Cookies.get("token");
+    setcookietoken(token || "");
+  }, [state_Token]);
   const [isToggled, setIsToggled] = useState(false);
 
   const menuRef = useRef();
 
   const [token, setToken] = useState("");
-  const [loginuser , setloginuser] = useState("")
-  const [auth , setauth] = useState("false")
+  const [loginuser, setloginuser] = useState("");
+  const [auth, setauth] = useState("false");
 
-useEffect(() => {
-  const local = JSON.parse(localStorage.getItem("designerhut_user") || "{}");
-  setauth(!!local.isauthenticated);
-  setloginuser(local.user?.role || "");
-  setToken(local.token || "");
-}, [state_Token]); 
+  useEffect(() => {
+    const local = JSON.parse(localStorage.getItem("designerhut_user") || "{}");
+    setauth(!!local.isauthenticated);
+    setloginuser(local.user?.role || "");
+    setToken(local.token || "");
+  }, [state_Token]);
 
+  console.log("loginuser", auth);
+  console.log("token", token);
 
- 
-
-  console.log("loginuser",auth);
-  console.log("token",token);
-  
-       
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -90,11 +85,16 @@ useEffect(() => {
 
   const handlerllogout = async () => {
     try {
-      const response = await api.post(Endpoint.LOGOUT, {}, { withCredentials: true });
+      const response = await api.post(
+        Endpoint.LOGOUT,
+        {},
+        { withCredentials: true }
+      );
 
       if (response.data.success) {
         localStorage.removeItem("designerhut_user");
-        window.location.href = "/login";
+        navigate('/login')
+        setauth(false)
       }
     } catch (error) {
       console.error("Logout error:", error.message);
@@ -122,17 +122,16 @@ useEffect(() => {
             </Link>
 
             <div className="hidden md:flex gap-6 items-center text-sm font-medium text-gray-700">
+              {auth ? (
+                loginuser === "user" ? (
+                  <Dropdown label="Hire Designer" />
+                ) : (
+                  <Dropdown label="Design" />
+                )
+              ) : (
+                <div className="invisible"></div>
+              )}
 
-             {auth ? (
-  loginuser === "user" ? (
-    <Dropdown label="Hire Designer" />
-  ) : (
-    <Dropdown label="Design" />
-  )
-) : (
-  <div className="invisible"></div>
-)}
-            
               <Link to={"/"}>
                 <div
                   className="cursor-pointer"
@@ -161,25 +160,28 @@ useEffect(() => {
               </Link>
               {cookietoken ? (
                 <div className="invisible"></div>
-              ):(
-                 <Link
-                to="/register"
-                className="hover:text-indigo-600 transition-colors"
-              >
-                Create Account
-              </Link>
+              ) : (
+                <Link
+                  to="/register"
+                  className="hover:text-indigo-600 transition-colors"
+                >
+                  Create Account
+                </Link>
               )}
-             {loginuser !== "user" ? (  <Link
-                to="/findjobs"
-                className="hover:text-indigo-600 transition-colors"
-              >
-                Find Job
-              </Link>):(<div className="invisible"></div>)}
-            
+              {loginuser !== "user" ? (
+                <Link
+                  to="/findjobs"
+                  className="hover:text-indigo-600 transition-colors"
+                >
+                  Find Job
+                </Link>
+              ) : (
+                <div className="invisible"></div>
+              )}
+
               <Link to={RoutesURL.MYAPPLICATION}>
-               <div>My Applications</div>
+                <div>My Applications</div>
               </Link>
-             
             </div>
           </div>
 
@@ -192,16 +194,14 @@ useEffect(() => {
                 Logout
               </Button>
             ) : (
-            
-               
-               <Link to="/login">
+              <Link to="/login">
                 <Button className="bg-gray-800 text-white hover:bg-green-600 rounded-4xl">
                   Login
                 </Button>
               </Link>
             )}
 
-            {auth === true? (
+            {auth === true ? (
               <DialogDemo />
             ) : (
               <Link to={"/login"}>
@@ -324,7 +324,14 @@ function Dropdown({ label }) {
   );
 }
 
-function ResponsiveModel({ setIsToggled, aboutRef, supportRef, auth, loginuser, cookietoken }) {
+function ResponsiveModel({
+  setIsToggled,
+  aboutRef,
+  supportRef,
+  auth,
+  loginuser,
+  cookietoken,
+}) {
   return (
     <motion.ul
       initial={{ opacity: 0, x: -200 }}
@@ -411,8 +418,3 @@ function ResponsiveModel({ setIsToggled, aboutRef, supportRef, auth, loginuser, 
     </motion.ul>
   );
 }
-
-
-
-
-
