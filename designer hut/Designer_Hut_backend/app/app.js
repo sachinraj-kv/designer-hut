@@ -16,6 +16,8 @@ app.use(cookieparser())
 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
+
+
 app.set('trust proxy', 1);
 app.use(cors({
   origin: [
@@ -30,9 +32,15 @@ app.use('/upload',designuploadrouter);
 app.use('/job',designjobrouter);
 app.use('/recruit',authorization , routers)
 
+
+
 app.use(customErrhandle)
 
+// app.use(express.static("dist")); // or your build folder
 
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "dist", "index.html"));
+// });
  
 
 

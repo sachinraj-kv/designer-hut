@@ -110,7 +110,7 @@ exports.user_logout = async ( req,res) => {
     try {
     const token = req.cookies.token;
 
-    console.log("token", token);
+    console.log("token in logout", req.cookies.token);
 
     if (token) {
         res.clearCookie("token", {
