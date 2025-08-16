@@ -16,6 +16,7 @@ app.use(cookieparser())
 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
+app.set('trust proxy', 1);
 app.use(cors({
   origin: "https://designhut-app.onrender.com",
   credentials: true
@@ -31,5 +32,6 @@ app.use(customErrhandle)
 
 
  
+
 
 module.exports = app;
