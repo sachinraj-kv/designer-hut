@@ -73,7 +73,7 @@ exports.uploadDesign = async (req, res,next) => {
         });
 
     } catch (error) {
-       customErrhandle(error)
+       next(error)
 
     }
 }
@@ -239,5 +239,6 @@ exports.uplodedfiledelete = async(req ,res,next) =>{
         next(error)
     }
 }
+
 
 
